@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Question;
 use App\Models\Option;
+use App\Models\Section;
 use Illuminate\Support\Facades\File;
 
 class QuestionSeeder extends Seeder
@@ -15,18 +16,24 @@ class QuestionSeeder extends Seeder
         if (!File::exists($path)) return;
 
         $content = File::get($path);
-        $sections = explode('# Section', $content);
-        array_shift($sections); // remove prefix before first section
+        $sectionsData = explode('# Section', $content);
+        array_shift($sectionsData); // remove prefix before first section
 
         $qOrder = 1;
-        foreach ($sections as $sectionData) {
-            $lines = explode("\n", trim($sectionData));
+        $sOrder = 1;
+        foreach ($sectionsData as $sectionContent) {
+            $lines = explode("\n", trim($sectionContent));
             $header = array_shift($lines);
             
             // Extract section info: " 1: સામાજિક (Social)"
             preg_match('/^\s*\d+:\s*(.*?)\s*\((.*?)\)/u', $header, $secMatches);
             $secGu = $secMatches[1] ?? 'વિભાગ';
             $secEn = $secMatches[2] ?? 'Section';
+
+            $section = Section::firstOrCreate(
+                ['title_gu' => $secGu],
+                ['title_en' => $secEn, 'order' => $sOrder++]
+            );
 
             $questions = explode('## ', implode("\n", $lines));
             array_shift($questions);
@@ -37,20 +44,19 @@ class QuestionSeeder extends Seeder
                 
                 // Q Header: "Q1: નામ (Full Name)"
                 preg_match('/^(.*?):\s*(.*?)\s*\((.*?)\)/u', $qHeader, $qMatches);
-                $qName = $qMatches[1] ?? 'Q';
                 $qGu = $qMatches[2] ?? 'પ્રશ્ન';
                 $qEn = $qMatches[3] ?? 'Question';
 
                 $qMeta = [];
                 $optionsList = [];
-                $isOption = false;
+                $isOptionAttribute = false;
 
                 foreach ($qLines as $l) {
                     $l = trim($l);
                     if (str_starts_with($l, 'options:')) {
-                        $isOption = true; continue;
+                        $isOptionAttribute = true; continue;
                     }
-                    if ($isOption && str_starts_with($l, '- ')) {
+                    if ($isOptionAttribute && str_starts_with($l, '- ')) {
                         $optionsList[] = substr($l, 2);
                         continue;
                     }
@@ -61,9 +67,7 @@ class QuestionSeeder extends Seeder
                 }
 
                 $question = Question::create([
-                    'section_name' => "Section " . ($qOrder),
-                    'section_title_gu' => $secGu,
-                    'section_title_en' => $secEn,
+                    'section_id' => $section->id,
                     'question_text_gu' => $qGu,
                     'question_text_en' => $qEn,
                     'type' => $qMeta['type'] ?? 'text',

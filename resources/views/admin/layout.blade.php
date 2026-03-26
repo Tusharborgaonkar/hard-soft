@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | Questionnaire System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -61,6 +62,7 @@
         <div class="sidebar-header">Admin Panel</div>
         <nav class="nav">
             <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->is('admin/dashboard') ? 'active' : '' }}">Dashboard</a>
+            <a href="{{ route('admin.sections.index') }}" class="nav-item {{ request()->is('admin/sections*') ? 'active' : '' }}">Manage Sections</a>
             <a href="{{ route('admin.questions') }}" class="nav-item {{ request()->is('admin/questions*') ? 'active' : '' }}">Manage Questions</a>
             <a href="{{ route('admin.responses') }}" class="nav-item {{ request()->is('admin/responses*') ? 'active' : '' }}">View Responses</a>
             <div style="margin-top: auto; padding: 1rem 0;">

@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
-            QuestionSeeder::class,
+            // QuestionSeeder::class, // Exclude to start with a clean slate
         ]);
     }
 }

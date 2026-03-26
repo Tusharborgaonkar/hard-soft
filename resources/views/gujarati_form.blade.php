@@ -44,10 +44,10 @@
         <div class="stepper-wrap">
             <div class="stepper" id="stepper">
                 <div class="stepper-fill" id="stepperFill"></div>
-                @foreach($sections as $title => $qs)
-                <div class="step-item {{ $loop->first ? 'active' : '' }}" data-step="{{ $loop->index }}">
+                @foreach($sections as $index => $section)
+                <div class="step-item {{ $index === 0 ? 'active' : '' }}" data-step="{{ $index }}">
                     <div class="step-bubble"><span>{{ $loop->iteration }}</span></div>
-                    <div class="step-lbl t" data-en="{{ $qs->first()->section_title_en }}">{{ $title }}</div>
+                    <div class="step-lbl t" data-en="{{ $section->title_en }}">{{ $section->title_gu }}</div>
                 </div>
                 @endforeach
             </div>
@@ -55,16 +55,16 @@
 
         {{-- FORM --}}
         <form id="questionnaireForm">
-            @foreach($sections as $title => $questions)
-            <div class="form-step {{ $loop->first ? 'active' : '' }}" id="step{{ $loop->index }}">
+            @foreach($sections as $index => $section)
+            <div class="form-step {{ $index === 0 ? 'active' : '' }}" id="step{{ $index }}">
                 <div class="section-header">
                     <div class="section-icon">📋</div>
                     <div>
-                        <div class="section-title t" data-en="{{ $questions->first()->section_title_en }}">{{ $title }}</div>
+                        <div class="section-title t" data-en="{{ $section->title_en }}">{{ $section->title_gu }}</div>
                     </div>
                 </div>
 
-                @foreach($questions as $q)
+                @foreach($section->questions as $q)
                 <div class="form-group">
                     <label class="t" data-en="{{ $q->question_text_en }}">
                         <span class="q-number">{{ $loop->iteration }}</span> {{ $q->question_text_gu }}
@@ -107,22 +107,25 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th class="t" data-en="Name">નામ</th>
-                                            <th class="t" data-en="Relation">સંબંધ</th>
-                                            <th class="t" data-en="Age">ઉંમર</th>
-                                            <th class="t" data-en="Education">શિક્ષણ</th>
+                                            @php 
+                                                $cols = explode(',', $q->meta_params['columns'] ?? 'નામ,સંબંધ,ઉંમર,શિક્ષણ');
+                                                $rowsRaw = $q->meta_params['rows'] ?? '5';
+                                                $rows = is_numeric($rowsRaw) ? range(1, (int)$rowsRaw) : explode(',', $rowsRaw);
+                                            @endphp
+                                            @foreach($cols as $col)
+                                                <th class="t" data-en="{{ trim($col) }}">{{ trim($col) }}</th>
+                                            @endforeach
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @for($i=1; $i<=5; $i++)
+                                        @foreach($rows as $rowIdx => $rowVal)
                                         <tr>
-                                            <td>{{ $i }}</td>
-                                            <td><input type="text" name="q_{{ $q->id }}[{{ $i }}][name]"></td>
-                                            <td><input type="text" name="q_{{ $q->id }}[{{ $i }}][rel]"></td>
-                                            <td><input type="text" name="q_{{ $q->id }}[{{ $i }}][age]"></td>
-                                            <td><input type="text" name="q_{{ $q->id }}[{{ $i }}][edu]"></td>
+                                            <td>{{ $rowVal }}</td>
+                                            @foreach($cols as $colIdx => $colVal)
+                                                <td><input type="text" name="q_{{ $q->id }}[{{ $rowIdx }}][{{ trim($colVal) }}]"></td>
+                                            @endforeach
                                         </tr>
-                                        @endfor
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
