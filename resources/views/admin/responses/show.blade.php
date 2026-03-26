@@ -1,0 +1,58 @@
+@extends('admin.layout')
+
+@section('title', 'Response Details')
+
+@section('content')
+<div style="margin-bottom: 1rem;">
+    <a href="{{ route('admin.responses') }}" style="color: var(--primary); text-decoration: none;">&larr; Back to List</a>
+</div>
+
+<div class="card">
+    <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <h2 style="margin-bottom: 0.5rem;">Response #{{ $response->id }}</h2>
+        <div style="color: var(--text-light); font-size: 0.875rem;">
+            IP: {{ $response->user_identifier }} | Submitted: {{ $response->created_at->format('M d, Y H:i:s') }}
+        </div>
+    </div>
+
+    @foreach($response->answers as $ans)
+    <div style="margin-bottom: 1.5rem; border-left: 4px solid var(--primary); padding-left: 1rem;">
+        <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">
+            {{ $ans->question->question_text_gu }}
+        </div>
+        <div style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 0.5rem;">
+            {{ $ans->question->question_text_en }}
+        </div>
+        <div style="background: #f8fafc; padding: 0.75rem; border-radius: 6px; font-weight: 500;">
+            @php $val = $ans->answer_text; @endphp
+            @if(is_array(json_decode($val, true)))
+                @php $decoded = json_decode($val, true); @endphp
+                @if(isset($decoded[1]) && is_array($decoded[1]))
+                    {{-- Table Data --}}
+                    <table style="font-size: 0.8rem; margin: 0;">
+                        <thead>
+                            <tr><th>Name</th><th>Rel</th><th>Age</th><th>Edu</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach($decoded as $row)
+                            <tr>
+                                <td>{{ $row['name'] ?? '-' }}</td>
+                                <td>{{ $row['rel'] ?? '-' }}</td>
+                                <td>{{ $row['age'] ?? '-' }}</td>
+                                <td>{{ $row['edu'] ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    {{-- Multi-select Option IDs or names --}}
+                    {{ implode(', ', $decoded) }}
+                @endif
+            @else
+                {{ $val }}
+            @endif
+        </div>
+    </div>
+    @endforeach
+</div>
+@endsection

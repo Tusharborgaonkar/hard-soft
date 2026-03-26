@@ -71,14 +71,45 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==================================================
        FORM SUBMIT
     ================================================== */
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
         e.preventDefault();
-        if (validate(steps[current])) {
-            form.style.display = 'none';
-            document.querySelector('.stepper-wrap').style.display = 'none';
-            successScreen.classList.add('active');
-            localStorage.removeItem('guj_step');
-            localStorage.removeItem('guj_form_data');
+        if (!validate(steps[current])) return;
+
+        const btn = form.querySelector('.btn-submit');
+        const btnText = btn.querySelector('span');
+        const originalText = btnText.textContent;
+        
+        btn.disabled = true;
+        btnText.textContent = langSwitch.checked ? 'Saving...' : 'સાચવી રહ્યું છે...';
+
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/questionnaire', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                form.style.display = 'none';
+                document.querySelector('.stepper-wrap').style.display = 'none';
+                successScreen.classList.add('active');
+                localStorage.removeItem('guj_step');
+                localStorage.removeItem('guj_form_data');
+                showToast(langSwitch.checked ? 'Submitted successfully!' : 'સફળતાપૂર્વક સબમિટ!');
+            } else {
+                throw new Error(result.message || 'Submission failed');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast(langSwitch.checked ? 'Error: ' + err.message : 'ભૂલ: ' + err.message, 'error');
+            btn.disabled = false;
+            btnText.textContent = originalText;
         }
     });
 
@@ -206,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function checkConditionals(radio) {
         document.querySelectorAll(`.conditional-field[data-trigger="${radio.name}"]`).forEach(field => {
-            const show = radio.value === field.dataset.value && radio.checked;
+            const show = radio.value == field.dataset.value && radio.checked;
             field.classList.toggle('show', show);
         });
     }
@@ -233,15 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
        LOCALSTORAGE SAVE / RESTORE
     ================================================== */
     function saveFormData() {
+        const formData = new FormData(form);
         const data = {};
-        form.querySelectorAll('input, select, textarea').forEach(el => {
-            if (!el.name) return;
-            if (el.type === 'radio' || el.type === 'checkbox') {
-                if (el.checked) data[el.name] = el.value;
+        for (let [key, value] of formData.entries()) {
+            if (key.endsWith('[]')) {
+                if (!data[key]) data[key] = [];
+                data[key].push(value);
             } else {
-                data[el.name] = el.value;
+                data[key] = value;
             }
-        });
+        }
         localStorage.setItem('guj_form_data', JSON.stringify(data));
     }
 
@@ -250,15 +282,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!raw) return;
         const data = JSON.parse(raw);
         Object.entries(data).forEach(([name, value]) => {
-            const el = form.querySelector(`[name="${name}"]`);
-            if (!el) return;
-            if (el.type === 'radio') {
-                const r = form.querySelector(`input[name="${name}"][value="${value}"]`);
-                if (r) { r.checked = true; checkConditionals(r); }
-            } else if (el.type === 'checkbox') {
-                el.checked = true;
+            if (name.endsWith('[]')) {
+                const values = Array.isArray(value) ? value : [value];
+                values.forEach(v => {
+                    const el = form.querySelector(`input[name="${name}"][value="${v}"]`);
+                    if (el) {
+                        el.checked = true;
+                        el.closest('.check-label')?.classList.add('selected');
+                    }
+                });
             } else {
-                el.value = value;
+                const el = form.querySelector(`[name="${name}"]`);
+                if (!el) return;
+                if (el.type === 'radio') {
+                    const r = form.querySelector(`input[name="${name}"][value="${value}"]`);
+                    if (r) {
+                        r.checked = true;
+                        r.closest('.radio-label')?.classList.add('selected');
+                        checkConditionals(r);
+                    }
+                } else {
+                    el.value = value;
+                }
             }
         });
     }
