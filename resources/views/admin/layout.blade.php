@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | Questionnaire System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <link href="https://unpkg.com/tabulator-tables@6.2.1/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.2.1/dist/js/tabulator.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -32,7 +33,7 @@
         .nav-item.active { background: var(--primary); color: #fff; }
         
         /* Main Content */
-        .main { margin-left: 260px; flex: 1; padding: 2rem; }
+        .main { margin-left: 260px; flex: 1; padding: 2rem; min-width: 0; overflow-x: hidden; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .page-title { font-size: 1.5rem; font-weight: 700; }
         
@@ -43,18 +44,30 @@
         .stat-card .val { font-size: 2rem; font-weight: 700; color: var(--primary); }
         
         /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th { text-align: left; padding: 1rem; background: #f1f5f9; font-weight: 600; color: var(--text-light); border-bottom: 1px solid var(--border); }
-        td { padding: 1rem; border-bottom: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem; }
+        th { text-align: left; padding: 0.75rem 1.5rem; background: #f1f5f9; font-weight: 600; color: var(--text-light); border-bottom: 1px solid var(--border); line-height: 1.2; }
+        td { padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); vertical-align: middle; line-height: 1.2; }
         tr:hover td { background: #f8fafc; }
+
+        /* Tabulator Custom Overrides */
+        .tabulator { font-size: 0.85rem; border: none; background-color: var(--white) !important; margin-top: 0.5rem; }
+        .tabulator-header { background-color: var(--white) !important; border-bottom: 1px solid var(--border) !important; color: var(--text-light); }
+        .tabulator-header .tabulator-col { background: #f1f5f9 !important; font-weight: 600; border: none; border-right: 1px solid var(--border) !important; }
+        .tabulator-header .tabulator-col .tabulator-col-content { padding: 0.75rem 1.5rem !important; }
+        .tabulator-row { background-color: var(--white) !important; margin-bottom: 0 !important; border-bottom: none !important; }
+        .tabulator-row.tabulator-row-even { background-color: var(--white) !important; }
+        .tabulator-row .tabulator-cell { padding: 0.75rem 1.5rem !important; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border) !important; vertical-align: middle; line-height: 1.2; }
+        .tabulator-row:hover { background-color: var(--white) !important; }
+        .tabulator-row:hover .tabulator-cell { background: #f8fafc !important; }
+        .tabulator-row.tabulator-row-moving { border: 1px solid var(--primary); background: #fff !important; opacity: 0.9; }
         
         .badge { padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: #d1fae5; color: #065f46; }
         .badge-warning { background: #fef3c7; color: #92400e; }
         
-        .btn { padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; text-decoration: none; display: inline-block; }
+        .btn { padding: 0.35rem 0.75rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; text-decoration: none; display: inline-block; }
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-sm { font-size: 0.875rem; }
+        .btn-sm { font-size: 0.7rem; padding: 0.2rem 0.4rem; }
 
         /* Responsive Wrappers */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -128,6 +141,15 @@
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
+            });
+
+            // Auto-initialize standard tables tightly grouped
+            document.querySelectorAll('.tabulator-auto').forEach(function(el) {
+                new Tabulator(el, {
+                    layout: "fitData", // Allows independent unrestrained column resizing
+                    movableColumns: true, // Enables column drag-and-drop
+                    columnDefaults: { formatter: "html" }
+                });
             });
         });
     </script>

@@ -21,7 +21,7 @@
 <div class="card">
     <h2 style="margin-bottom: 1rem;">Recent Responses</h2>
     <div class="table-responsive">
-    <table>
+    <table class="tabulator-auto">
         <thead>
             <tr>
                 <th>ID</th>

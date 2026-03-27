@@ -15,30 +15,30 @@
             <tr>
                 <th style="width: 40px;"></th>
                 <th style="width: 50px;">Order</th>
-                <th>Title (Gujarati)</th>
-                <th>Title (English)</th>
-                <th>Questions</th>
-                <th>Status</th>
-                <th style="text-align: right;">Actions</th>
+                <th style="min-width: 200px;">Title (Gujarati)</th>
+                <th style="min-width: 200px;">Title (English)</th>
+                <th style="width: 100px; text-align: center;">Questions</th>
+                <th style="width: 100px; text-align: center;">Status</th>
+                <th style="text-align: left; width: 140px;">Actions</th>
             </tr>
         </thead>
         <tbody class="sortable-body">
             @foreach($sections as $s)
             <tr data-id="{{ $s->id }}">
-                <td class="drag-handle" style="cursor: grab; color: #cbd5e1; font-size: 1.2rem;">≡</td>
+                <td class="drag-handle" style="cursor: grab; color: #cbd5e1; font-size: 1.2rem;"><span data-id="{{ $s->id }}">≡</span></td>
                 <td class="order-cell">{{ $s->order }}</td>
                 <td style="font-weight: 600;">{{ $s->title_gu }}</td>
                 <td>{{ $s->title_en }}</td>
-                <td><span class="badge" style="background:#e0e7ff; color:#4338ca;">{{ $s->questions_count }}</span></td>
-                <td>
+                <td style="text-align: center;"><span class="badge" style="background:#e0e7ff; color:#4338ca;">{{ $s->questions_count }}</span></td>
+                <td style="text-align: center;">
                     @if($s->is_active)
                         <span class="badge badge-success">Active</span>
                     @else
                         <span class="badge" style="background:#f1f5f9;color:#64748b">Inactive</span>
                     @endif
                 </td>
-                <td style="text-align: right;">
-                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                <td style="text-align: left;">
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-start;">
                         <a href="{{ route('admin.sections.edit', $s->id) }}" class="btn btn-sm" style="background: #e0e7ff; color: #4338ca;">Edit</a>
                         <form action="{{ route('admin.sections.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Deleting a section will delete all its questions. Are you sure?')">
                             @csrf
@@ -55,15 +55,25 @@
 </div>
 
 <script>
-    new Sortable(document.querySelector('.sortable-body'), {
-        handle: '.drag-handle',
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onEnd: function() {
+    document.addEventListener('DOMContentLoaded', function() {
+        let table = new Tabulator("#sortable-sections", {
+            layout: "fitData", // Allows strict manual sizing
+            movableRows: true, // Enables native Tabulator drag to reorder
+            movableColumns: true, // Enables column drag-and-drop
+            columnDefaults: { formatter: "html", headerSort: false },
+        });
+
+        table.on("rowMoved", function(row) {
             let ids = [];
-            document.querySelectorAll('.sortable-body tr').forEach((tr, index) => {
-                ids.push(tr.dataset.id);
-                tr.querySelector('.order-cell').textContent = index + 1;
+            let rows = table.getRows();
+            rows.forEach((r, index) => {
+                let cellHtml = r.getCells()[0].getValue();
+                let match = cellHtml.match(/data-id="(\d+)"/);
+                if (match) {
+                    ids.push(match[1]);
+                    // Update visual order
+                    r.update({ "Order": index + 1 });
+                }
             });
 
             fetch("{{ route('admin.sections.reorder') }}", {
@@ -73,13 +83,8 @@
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({ ids: ids })
-            }).then(response => response.json())
-              .then(data => {
-                  if(data.success) {
-                      // Optional: Show a subtle success toast
-                  }
-              });
-        }
+            }).catch(err => console.error(err));
+        });
     });
 </script>
 

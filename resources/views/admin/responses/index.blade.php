@@ -6,7 +6,7 @@
 <div class="card">
     <h2>Submission History</h2>
     <div class="table-responsive">
-    <table>
+    <table class="tabulator-auto">
         <thead>
             <tr>
                 <th>ID</th>
