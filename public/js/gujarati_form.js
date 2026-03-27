@@ -84,7 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const formData = new FormData(form);
-            const response = await fetch('/questionnaire', {
+            const editMode = form.dataset.editMode === 'true';
+            const url = editMode ? form.dataset.updateUrl : '/questionnaire';
+            
+            if (editMode) {
+                formData.append('_method', 'PUT');
+            }
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -99,8 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.style.display = 'none';
                 document.querySelector('.stepper-wrap').style.display = 'none';
                 successScreen.classList.add('active');
-                localStorage.removeItem('guj_step');
-                localStorage.removeItem('guj_form_data');
+                if (!editMode) {
+                    localStorage.removeItem('guj_step');
+                    localStorage.removeItem('guj_form_data');
+                }
                 showToast(langSwitch.checked ? 'Submitted successfully!' : 'સફળતાપૂર્વક સબમિટ!');
             } else {
                 throw new Error(result.message || 'Submission failed');
@@ -278,7 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function restoreFormData() {
-        const raw = localStorage.getItem('guj_form_data');
+        let raw = localStorage.getItem('guj_form_data');
+        if (window.adminEditData) {
+            raw = JSON.stringify(window.adminEditData);
+        }
         if (!raw) return;
         const data = JSON.parse(raw);
         Object.entries(data).forEach(([name, value]) => {

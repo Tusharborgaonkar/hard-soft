@@ -9,7 +9,10 @@
 
 <div class="card">
     <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-        <h2 style="margin-bottom: 0.5rem;">Response #{{ $response->id }}</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2>Response #{{ $response->id }}</h2>
+            <a href="{{ route('admin.responses.edit', $response->id) }}" class="btn btn-primary btn-sm">Edit Response</a>
+        </div>
         <div style="color: var(--text-light); font-size: 0.875rem;">
             IP: {{ $response->user_identifier }} | Submitted: {{ $response->created_at->format('M d, Y H:i:s') }}
         </div>

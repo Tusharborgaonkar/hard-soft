@@ -37,7 +37,7 @@ class QuestionnaireController extends Controller
                         \App\Models\Answer::create([
                             'response_id' => $response->id,
                             'question_id' => (int)$questionId,
-                            'answer_text' => $answerText,
+                            'answer_value' => $answerText,
                         ]);
                     }
                 }

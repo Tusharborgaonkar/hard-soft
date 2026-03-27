@@ -28,9 +28,9 @@ class AdminController extends Controller
     {
         $questions = Question::with(['options', 'section'])
             ->get()
-            ->sortBy(function($q) {
-                return ($q->section->order ?? 0) . '-' . $q->order;
-            });
+            ->sortBy(function ($q) {
+            return ($q->section->order ?? 0) . '-' . $q->order;
+        });
         return view('admin.questions.index', compact('questions'));
     }
 
@@ -56,7 +56,7 @@ class AdminController extends Controller
                 'type', 'is_required', 'meta_params'
             ]);
             $data['order'] = Question::where('section_id', $request->section_id)->max('order') + 1;
-            
+
             $question = Question::create($data);
 
             if ($request->has('options')) {
@@ -86,7 +86,7 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {
         $question = Question::findOrFail($id);
-        
+
         $request->validate([
             'section_id' => 'required|exists:sections,id',
             'question_text_gu' => 'required',
@@ -100,11 +100,11 @@ class AdminController extends Controller
                 'question_text_gu', 'question_text_en',
                 'type', 'is_required', 'meta_params'
             ]);
-            
+
             $question->update($data);
 
             $question->options()->delete();
-            
+
             if ($request->has('options')) {
                 foreach ($request->options as $opt) {
                     $gu = trim($opt['gu'] ?? '');
@@ -156,5 +156,70 @@ class AdminController extends Controller
     {
         $response = Response::with(['answers.question'])->findOrFail($id);
         return view('admin.responses.show', compact('response'));
+    }
+
+    public function editResponse($id)
+    {
+        $response = Response::with(['answers.question'])->findOrFail($id);
+        $sections = \App\Models\Section::where('is_active', true)
+            ->with(['questions' => function ($query) {
+                $query->where('is_active', true)->with('options')->orderBy('order');
+            }])
+            ->orderBy('order')
+            ->get();
+            
+        $editData = [];
+        foreach($response->answers as $ans) {
+            $val = $ans->answer_value;
+            $decoded = json_decode($val, true);
+            if (is_array($decoded)) {
+                if ($ans->question->type === 'checkbox') {
+                     $editData['q_'.$ans->question_id.'[]'] = $decoded;
+                } else if ($ans->question->type === 'table') {
+                     foreach($decoded as $rowIdx => $rowObj) {
+                         if(is_array($rowObj)) {
+                             foreach($rowObj as $colKey => $colVal) {
+                                 $name = 'q_' . $ans->question_id . '[' . $rowIdx . '][' . $colKey . ']';
+                                 $editData[$name] = $colVal;
+                             }
+                         }
+                     }
+                } else {
+                     $editData['q_'.$ans->question_id] = $decoded;
+                }
+            } else {
+                $editData['q_'.$ans->question_id] = $val;
+            }
+        }
+        
+        $editMode = true;
+        
+        return view('gujarati_form', compact('sections', 'response', 'editData', 'editMode'));
+    }
+
+    public function updateResponse(Request $request, $id)
+    {
+        return DB::transaction(function () use ($request, $id) {
+            $response = Response::findOrFail($id);
+
+            foreach ($request->all() as $key => $value) {
+                if (str_starts_with($key, 'q_')) {
+                    $questionId = str_replace('q_', '', $key);
+                    $answerText = is_array($value) ? json_encode($value) : $value;
+
+                    if ($answerText !== null && $answerText !== '') {
+                        Answer::updateOrCreate(
+                            ['response_id' => $response->id, 'question_id' => (int)$questionId],
+                            ['answer_value' => $answerText]
+                        );
+                    } else {
+                        // If empty but exists, we might want to delete it or leave empty
+                        Answer::where('response_id', $response->id)->where('question_id', (int)$questionId)->delete();
+                    }
+                }
+            }
+
+            return response()->json(['success' => true]);
+        });
     }
 }

@@ -24,6 +24,7 @@ class SectionController extends Controller
         $request->validate(['title_gu' => 'required']);
         $data = $request->all();
         $data['order'] = Section::max('order') + 1;
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
         Section::create($data);
         return redirect()->route('admin.sections.index')->with('success', 'Section created successfully!');
     }
@@ -38,7 +39,9 @@ class SectionController extends Controller
     {
         $request->validate(['title_gu' => 'required']);
         $section = Section::findOrFail($id);
-        $section->update($request->all());
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active') ? 1 : 0;
+        $section->update($data);
         return redirect()->route('admin.sections.index')->with('success', 'Section updated successfully!');
     }
 

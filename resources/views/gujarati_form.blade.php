@@ -25,18 +25,26 @@
             <span class="lang-label">EN</span>
         </div>
 
+        {{-- Edit Banner --}}
+        @if(isset($editMode) && $editMode)
+        <div style="background: var(--warning); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; display: flex; justify-content: space-between;">
+            <span>Editing Response #{{ $response->id }}</span>
+            <a href="{{ route('admin.responses.show', $response->id) }}" style="color: #fff; text-decoration: underline;">Cancel Edit</a>
+        </div>
+        @endif
+
         {{-- Header --}}
         <div class="header">
             <div class="header-badge">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 <span class="t" data-en="PhD Research 2024-25">પીએચ.ડી. સંશોધન ૨૦૨૪-૨૫</span>
             </div>
-            <h1 class="t" data-en="Gujarat University – School of Social Sciences">ગુજરાત યુનિવર્સિટી – સ્કૂલ ઓફ સોશિયલ સાયન્સિસ</h1>
-            <h2 class="t" data-en="Department of Sociology | Navrangpura, Ahmedabad">સમાજશાસ્ત્ર વિભાગ | નવરંગપુરા, અમદાવાદ</h2>
+            <h1 class="t" data-en="Gujarat University – School of Social Sciences">ગુજરાત યુનિવર્સિટી સ્કૂલ ઓફ સોશિયલ સાયન્સિસ</h1>
+            <h2 class="t" data-en="Department of Sociology | Navrangpura, Ahmedabad - 380009">સમાજશાસ્ત્ર વિભાગ, સમાજ વિજ્ઞાન ભવન, ગુજરાત યુનિવર્સિટી<br>નવરંગપુરા, અમદાવાદ – 380009</h2>
             <div class="topic-box">
                 <strong class="t" data-en="Subject">વિષય</strong>:
-                <span class="t" data-en='"A Sociological Study of Female Teachers in Educational Schools (Gandhinagar District)"'>"શૈક્ષણિક શાળાઓમાં મહિલા શિક્ષિકાઓ – એક સમાજશાસ્ત્રીય અભ્યાસ (ગાંધીનગર જિલ્લો)"</span>
-                <br><small style="color:var(--text-muted);margin-top:.4rem;display:block;" class="t" data-en="Guide: Dr. Hardik Thakkar | Researcher: Ramesh K. Bakar">માર્ગદર્શક: ડૉ. હાર્દિક ઠક્કર | સંશોધક: રમેશ કે. બકર</small>
+                <span class="t" data-en='"A Sociological Study of Female Teachers Employed in Educational Schools"'>"શૈક્ષણિક શાળાઓમાં શિક્ષક તરીકે નોકરી કરતી મહિલા શિક્ષિકાઓનો – એક સમાજશાસ્ત્રીય અભ્યાસ" (ગાંધીનગર જિલ્લાના સંદર્ભમાં)</span>
+                <br><small style="color:var(--text-muted);margin-top:.4rem;display:block;" class="t" data-en="Guide: Dr. Hardik Thakkar (C.U. Shah Arts College) | Researcher: Ramesh K. Bakar">માર્ગદર્શક: ડૉ. હાર્દિક ઠક્કર (સી. યુ. શાહ આર્ટ્સ કોલેજ) | સંશોધક: રમેશ કે. બકર</small>
             </div>
         </div>
 
@@ -54,7 +62,9 @@
         </div>
 
         {{-- FORM --}}
-        <form id="questionnaireForm">
+        <form id="questionnaireForm" 
+              data-edit-mode="{{ isset($editMode) ? 'true' : 'false' }}"
+              data-update-url="{{ isset($response) ? route('admin.responses.update', $response->id) : '' }}">
             @foreach($sections as $index => $section)
             <div class="form-step {{ $index === 0 ? 'active' : '' }}" id="step{{ $index }}">
                 <div class="section-header">
@@ -168,9 +178,9 @@
             <div class="success-icon">✓</div>
             <h2 class="t" data-en="Submitted Successfully!" style="color:var(--success);font-size:1.6rem;margin-bottom:.5rem">સફળતાપૂર્વક સબમિટ!</h2>
             <p class="t" data-en="Thank you for completing the questionnaire." style="color:var(--text-muted);margin-bottom:2rem">પ્રશ્નાવલી ભરવા બદલ ધન્યવાદ.</p>
-            <a href="{{ url('/') }}" class="btn btn-prev" style="text-decoration:none;display:inline-flex;">
+            <a href="{{ isset($editMode) && $editMode ? route('admin.responses.show', $response->id) : url('/questionnaire') }}" class="btn btn-prev" style="text-decoration:none;display:inline-flex;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span class="t" data-en="Back to Home">હોમ પેજ પર પાછા જાઓ</span>
+                <span class="t" data-en="{{ isset($editMode) && $editMode ? 'Back to Response' : 'Fill Another Form' }}">{{ isset($editMode) && $editMode ? 'રિસ્પોન્સ પર પાછા જાઓ' : 'નવું ફોર્મ ભરો' }}</span>
             </a>
         </div>
 
@@ -181,5 +191,10 @@
 <div class="toast" id="toastMsg"></div>
 
 <script src="{{ asset('js/gujarati_form.js') }}"></script>
+@if(isset($editMode) && $editMode)
+<script>
+    window.adminEditData = {!! json_encode($editData ?? null) !!};
+</script>
+@endif
 </body>
 </html>
