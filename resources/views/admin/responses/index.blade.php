@@ -5,6 +5,7 @@
 @section('content')
 <div class="card">
     <h2>Submission History</h2>
+    <div class="table-responsive">
     <table>
         <thead>
             <tr>
@@ -29,6 +30,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
     <div style="margin-top: 1rem;">
         {{ $responses->links() }}
     </div>

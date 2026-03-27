@@ -12,8 +12,8 @@ class QuestionnaireController extends Controller
     {
         $sections = \App\Models\Section::where('is_active', true)
             ->with(['questions' => function ($query) {
-                $query->where('is_active', true)->with('options')->orderBy('order');
-            }])
+            $query->where('is_active', true)->with('options')->orderBy('order');
+        }])
             ->orderBy('order')
             ->get();
 

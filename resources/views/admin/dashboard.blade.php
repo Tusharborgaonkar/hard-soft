@@ -20,6 +20,7 @@
 
 <div class="card">
     <h2 style="margin-bottom: 1rem;">Recent Responses</h2>
+    <div class="table-responsive">
     <table>
         <thead>
             <tr>
@@ -42,5 +43,6 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

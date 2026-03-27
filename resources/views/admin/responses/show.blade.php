@@ -32,6 +32,7 @@
                 @php $decoded = json_decode($val, true); @endphp
                 @if(isset($decoded[1]) && is_array($decoded[1]))
                     {{-- Table Data --}}
+                    <div class="table-responsive">
                     <table style="font-size: 0.8rem; margin: 0;">
                         <thead>
                             <tr><th>Name</th><th>Rel</th><th>Age</th><th>Edu</th></tr>
@@ -47,6 +48,7 @@
                             @endforeach
                         </tbody>
                     </table>
+                    </div>
                 @else
                     {{-- Multi-select Option IDs or names --}}
                     {{ implode(', ', $decoded) }}

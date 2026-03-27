@@ -17,7 +17,8 @@ Route::get('/logout', [\App\Http\Controllers\Admin\AuthController::class , 'logo
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/', function () {
-            return redirect('/admin/dashboard'); }
+            return redirect('/admin/dashboard');
+        }
         );
         Route::get('/dashboard', [\App\Http\Controllers\AdminController::class , 'dashboard'])->name('admin.dashboard');
 

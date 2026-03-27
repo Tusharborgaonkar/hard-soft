@@ -9,6 +9,7 @@
         <a href="{{ route('admin.sections.create') }}" class="btn btn-primary">+ Add New Section</a>
     </div>
 
+    <div class="table-responsive">
     <table id="sortable-sections">
         <thead>
             <tr>
@@ -50,6 +51,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 </div>
 
 <script>

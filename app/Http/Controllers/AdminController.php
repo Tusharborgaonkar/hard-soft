@@ -28,9 +28,10 @@ class AdminController extends Controller
     {
         $questions = Question::with(['options', 'section'])
             ->get()
-            ->sortBy(function ($q) {
-            return ($q->section->order ?? 0) . '-' . $q->order;
-        });
+            ->sortBy([
+                ['section.order', 'asc'],
+                ['order', 'asc'],
+            ]);
         return view('admin.questions.index', compact('questions'));
     }
 
@@ -163,37 +164,40 @@ class AdminController extends Controller
         $response = Response::with(['answers.question'])->findOrFail($id);
         $sections = \App\Models\Section::where('is_active', true)
             ->with(['questions' => function ($query) {
-                $query->where('is_active', true)->with('options')->orderBy('order');
-            }])
+            $query->where('is_active', true)->with('options')->orderBy('order');
+        }])
             ->orderBy('order')
             ->get();
-            
+
         $editData = [];
-        foreach($response->answers as $ans) {
+        foreach ($response->answers as $ans) {
             $val = $ans->answer_value;
             $decoded = json_decode($val, true);
             if (is_array($decoded)) {
                 if ($ans->question->type === 'checkbox') {
-                     $editData['q_'.$ans->question_id.'[]'] = $decoded;
-                } else if ($ans->question->type === 'table') {
-                     foreach($decoded as $rowIdx => $rowObj) {
-                         if(is_array($rowObj)) {
-                             foreach($rowObj as $colKey => $colVal) {
-                                 $name = 'q_' . $ans->question_id . '[' . $rowIdx . '][' . $colKey . ']';
-                                 $editData[$name] = $colVal;
-                             }
-                         }
-                     }
-                } else {
-                     $editData['q_'.$ans->question_id] = $decoded;
+                    $editData['q_' . $ans->question_id . '[]'] = $decoded;
                 }
-            } else {
-                $editData['q_'.$ans->question_id] = $val;
+                else if ($ans->question->type === 'table') {
+                    foreach ($decoded as $rowIdx => $rowObj) {
+                        if (is_array($rowObj)) {
+                            foreach ($rowObj as $colKey => $colVal) {
+                                $name = 'q_' . $ans->question_id . '[' . $rowIdx . '][' . $colKey . ']';
+                                $editData[$name] = $colVal;
+                            }
+                        }
+                    }
+                }
+                else {
+                    $editData['q_' . $ans->question_id] = $decoded;
+                }
+            }
+            else {
+                $editData['q_' . $ans->question_id] = $val;
             }
         }
-        
+
         $editMode = true;
-        
+
         return view('gujarati_form', compact('sections', 'response', 'editData', 'editMode'));
     }
 
@@ -209,10 +213,11 @@ class AdminController extends Controller
 
                     if ($answerText !== null && $answerText !== '') {
                         Answer::updateOrCreate(
-                            ['response_id' => $response->id, 'question_id' => (int)$questionId],
-                            ['answer_value' => $answerText]
+                        ['response_id' => $response->id, 'question_id' => (int)$questionId],
+                        ['answer_value' => $answerText]
                         );
-                    } else {
+                    }
+                    else {
                         // If empty but exists, we might want to delete it or leave empty
                         Answer::where('response_id', $response->id)->where('question_id', (int)$questionId)->delete();
                     }

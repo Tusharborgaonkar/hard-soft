@@ -55,6 +55,21 @@
         .btn { padding: 0.5rem 1rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; text-decoration: none; display: inline-block; }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-sm { font-size: 0.875rem; }
+
+        /* Responsive Wrappers */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); padding: 0.5rem; margin-right: 0.5rem; }
+        
+        /* Mobile Breakpoint */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); z-index: 1000; transition: transform 0.3s ease; }
+            .sidebar.open { transform: translateX(0); box-shadow: 4px 0 10px rgba(0,0,0,0.1); }
+            .main { margin-left: 0; padding: 1rem; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+            .sidebar-overlay.active { display: block; }
+            .menu-toggle { display: block; }
+            .top-bar { margin-bottom: 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -76,7 +91,10 @@
     
     <div class="main">
         <div class="top-bar">
-            <h1 class="page-title">@yield('title')</h1>
+            <div style="display: flex; align-items: center;">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">@yield('title')</h1>
+            </div>
             <div class="user-menu">Admin</div>
         </div>
         
@@ -88,5 +106,30 @@
 
         @yield('content')
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('active');
+                    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                });
+            }
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    </script>
 </body>
 </html>

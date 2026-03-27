@@ -29,6 +29,7 @@
             વિભાગ: {{ $section ?: 'Uncategorized' }}
         </h3>
         
+        <div class="table-responsive">
         <table>
             <thead>
                 <tr>
@@ -76,6 +77,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
     @endforeach
 </div>
