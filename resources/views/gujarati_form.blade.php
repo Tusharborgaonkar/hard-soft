@@ -254,7 +254,7 @@
 {{-- Toast --}}
 <div class="toast" id="toastMsg"></div>
 
-<script src="{{ asset('js/gujarati_form.js') }}"></script>
+<script src="{{ asset('js/gujarati_form.js') }}?v={{ time() }}"></script>
 @if(isset($editMode) && $editMode)
 <script>
     window.adminEditData = {!! json_encode($editData ?? null) !!};
