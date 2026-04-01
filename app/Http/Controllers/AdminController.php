@@ -54,8 +54,10 @@ class AdminController extends Controller
             $data = $request->only([
                 'section_id',
                 'question_text_gu', 'question_text_en',
-                'type', 'is_required', 'meta_params'
+                'type'
             ]);
+            $data['is_required'] = $request->has('is_required');
+            $data['meta_params'] = $request->input('meta_params', null);
             $data['order'] = Question::where('section_id', $request->section_id)->max('order') + 1;
 
             $question = Question::create($data);
@@ -99,8 +101,10 @@ class AdminController extends Controller
             $data = $request->only([
                 'section_id',
                 'question_text_gu', 'question_text_en',
-                'type', 'is_required', 'meta_params'
+                'type'
             ]);
+            $data['is_required'] = $request->has('is_required');
+            $data['meta_params'] = $request->input('meta_params', null);
 
             $question->update($data);
 
