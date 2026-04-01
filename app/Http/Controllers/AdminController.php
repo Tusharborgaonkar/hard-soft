@@ -171,6 +171,8 @@ class AdminController extends Controller
 
         $editData = [];
         foreach ($response->answers as $ans) {
+            if (!$ans->question) continue;
+            
             $val = $ans->answer_value;
             $decoded = json_decode($val, true);
             if (is_array($decoded)) {

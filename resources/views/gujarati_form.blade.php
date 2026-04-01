@@ -119,9 +119,10 @@
                                         <tr>
                                             <th>#</th>
                                             @php 
-                                                $colsRaw = $q->meta_params['columns'] ?? 'નામ,સંબંધ,ઉંમર,શિક્ષણ';
+                                                $meta = is_array($q->meta_params) ? $q->meta_params : [];
+                                                $colsRaw = $meta['columns'] ?? 'નામ,સંબંધ,ઉંમર,શિક્ષણ';
                                                 $cols = is_array($colsRaw) ? $colsRaw : explode(',', $colsRaw);
-                                                $rowsRaw = $q->meta_params['rows'] ?? '5';
+                                                $rowsRaw = $meta['rows'] ?? '5';
                                                 $rows = is_numeric($rowsRaw) ? range(1, (int)$rowsRaw) : (is_array($rowsRaw) ? $rowsRaw : explode(',', $rowsRaw));
                                             @endphp
                                             @foreach($cols as $col)
