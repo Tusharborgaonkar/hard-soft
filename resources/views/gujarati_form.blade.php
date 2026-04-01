@@ -208,13 +208,45 @@
                     @if(!empty($q->meta_params['has_reason']))
                         @php
                             $reasonLabel = !empty($q->meta_params['reason_label']) ? $q->meta_params['reason_label'] : 'શા માટે ? (Why?)';
+                            $reasonTrigger = $q->meta_params['reason_trigger'] ?? '';
                         @endphp
-                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed #e5e7eb;">
+                        <div id="reason_container_{{ $q->id }}" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed #e5e7eb; {!! $reasonTrigger ? 'display: none;' : '' !!}">
                             <label style="display:block; font-size:0.9rem; font-weight:600; margin-bottom:0.8rem; color: var(--text-dark);">
-                                {{ $reasonLabel }}
+                                <span class="t" data-en="{{ !empty($q->meta_params['reason_label_en']) ? $q->meta_params['reason_label_en'] : 'Why?' }}">{{ $reasonLabel }}</span>
                             </label>
                             <input type="text" name="q_{{ $q->id }}_reason" value="{{ $editData['q_'.$q->id.'_reason'] ?? '' }}" placeholder="..." style="width:100%; padding:0.8rem 1rem; border:1.5px solid var(--input-border); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem; transition:border-color 0.2s; outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--input-border)'">
                         </div>
+
+                        @if($reasonTrigger)
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const inputs = document.querySelectorAll('input[name="q_{{ $q->id }}"], input[name="q_{{ $q->id }}[]"]');
+                                const container = document.getElementById('reason_container_{{ $q->id }}');
+                                const triggerValue = "{{ $reasonTrigger }}".trim().toLowerCase();
+
+                                function checkTrigger() {
+                                    let shouldShow = false;
+                                    inputs.forEach(input => {
+                                        if (input.checked && input.value.trim().toLowerCase() === triggerValue) {
+                                            shouldShow = true;
+                                        }
+                                    });
+                                    if(shouldShow) {
+                                        container.style.display = 'block';
+                                    } else {
+                                        container.style.display = 'none';
+                                    }
+                                }
+
+                                inputs.forEach(input => {
+                                    input.addEventListener('change', checkTrigger);
+                                });
+                                
+                                // Also trigger if pre-populated in edit mode
+                                checkTrigger();
+                            });
+                        </script>
+                        @endif
                     @endif
                 </div>
 

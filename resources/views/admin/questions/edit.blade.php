@@ -61,9 +61,16 @@
                 </label>
             </div>
         </div>
-        <div id="reason-label-container" style="margin-top: 1.5rem; display: {{ !empty($question->meta_params['has_reason']) ? 'block' : 'none' }};">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Custom Text Field Label</label>
-            <input type="text" name="meta_params[reason_label]" value="{{ $question->meta_params['reason_label'] ?? '' }}" placeholder="If blank, defaults to: શા માટે ? (Why?)" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+        <div id="reason-label-container" style="margin-top: 1.5rem; display: {{ !empty($question->meta_params['has_reason']) ? 'block' : 'none' }}; border: 1px solid var(--border); padding: 1.25rem; border-radius: 8px; background: #fdfdfd;">
+            <div style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Custom Text Field Label</label>
+                <input type="text" name="meta_params[reason_label]" value="{{ $question->meta_params['reason_label'] ?? '' }}" placeholder="If blank, defaults to: શા માટે ? (Why?)" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+            </div>
+            <div>
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Show Only If User Selects Option: (Optional)</label>
+                <input type="text" name="meta_params[reason_trigger]" value="{{ $question->meta_params['reason_trigger'] ?? '' }}" placeholder="e.g. હા (Leave blank to always show)" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+                <small style="color: #666; margin-top: 0.25rem; display: block;">If typed here, the custom text box will stay perfectly hidden until the user clicks this exact choice.</small>
+            </div>
         </div>
     </div>
 
