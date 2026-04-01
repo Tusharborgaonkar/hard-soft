@@ -205,10 +205,10 @@
                             @break
                     @endswitch
 
-                    @php
-                        $reasonLabel = $q->meta_params['reason_label'] ?? (($q->meta_params['has_reason'] ?? false) ? 'શા માટે ? (Why?)' : null);
-                    @endphp
-                    @if($reasonLabel)
+                    @if(!empty($q->meta_params['has_reason']))
+                        @php
+                            $reasonLabel = !empty($q->meta_params['reason_label']) ? $q->meta_params['reason_label'] : 'શા માટે ? (Why?)';
+                        @endphp
                         <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed #e5e7eb;">
                             <label style="display:block; font-size:0.9rem; font-weight:600; margin-bottom:0.8rem; color: var(--text-dark);">
                                 {{ $reasonLabel }}
