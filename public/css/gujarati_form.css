@@ -644,6 +644,59 @@ tbody td input[type="text"]:focus {
     box-shadow: 0 0 0 2px rgba(92,82,200,.12);
 }
 
+/* ==========================================
+   TABULATOR CUSTOMIZATION
+   ========================================== */
+.question-tabulator {
+    font-size: 0.88rem;
+    border: none !important;
+    background: transparent !important;
+}
+.question-tabulator .tabulator-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light)) !important;
+    color: #fff !important;
+    border-bottom: none !important;
+}
+.question-tabulator .tabulator-header .tabulator-col {
+    background: transparent !important;
+    border-right: 1px solid rgba(255,255,255,0.2) !important;
+}
+.question-tabulator .tabulator-header .tabulator-col-content {
+    padding: 0.85rem 0.8rem !important;
+}
+.question-tabulator .tabulator-row {
+    border-bottom: 1px solid #f0eeff !important;
+}
+.question-tabulator .tabulator-row:nth-child(even) {
+    background: #f8f7ff !important;
+}
+.question-tabulator .tabulator-row:hover {
+    background: #f0eeff !important;
+}
+.question-tabulator .tabulator-cell {
+    padding: 0.4rem 0.5rem !important;
+    border-right: 1px solid #f0eeff !important;
+}
+.question-tabulator .tabulator-cell input[type="text"],
+.question-tabulator .tabulator-cell .tabulator-editor {
+    width: 100%;
+    padding: 0.45rem 0.7rem !important;
+    border: 1.5px solid transparent !important;
+    background: transparent !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem !important;
+    outline: none !important;
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+    transition: var(--transition) !important;
+}
+.question-tabulator .tabulator-cell input[type="text"]:focus,
+.question-tabulator .tabulator-cell .tabulator-editor:focus {
+    border-color: var(--primary) !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 2px rgba(92,82,200,.12) !important;
+}
+
 
 /* ==========================================
    NAVIGATION BUTTONS

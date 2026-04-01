@@ -180,14 +180,7 @@ class AdminController extends Controller
                     $editData['q_' . $ans->question_id . '[]'] = $decoded;
                 }
                 else if ($ans->question->type === 'table') {
-                    foreach ($decoded as $rowIdx => $rowObj) {
-                        if (is_array($rowObj)) {
-                            foreach ($rowObj as $colKey => $colVal) {
-                                $name = 'q_' . $ans->question_id . '[' . $rowIdx . '][' . $colKey . ']';
-                                $editData[$name] = $colVal;
-                            }
-                        }
-                    }
+                    $editData['q_' . $ans->question_id] = $decoded;
                 }
                 else {
                     $editData['q_' . $ans->question_id] = $decoded;

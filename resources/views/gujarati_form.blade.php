@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Gujarati:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/tabulator-tables@6.2.1/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.2.1/dist/js/tabulator.min.js"></script>
     <link rel="stylesheet" href="{{ asset('css/gujarati_form.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -113,35 +115,69 @@
                             @break
 
                         @case('table')
+                            @php 
+                                $meta = is_array($q->meta_params) ? $q->meta_params : [];
+                                $colsRaw = $meta['columns'] ?? 'નામ,સંબંધ,ઉંમર,શિક્ષણ';
+                                $cols = is_array($colsRaw) ? $colsRaw : array_map('trim', explode(',', $colsRaw));
+                                $rowsRaw = $meta['rows'] ?? '5';
+                                $rowsCount = is_numeric($rowsRaw) ? (int)$rowsRaw : (is_array($rowsRaw) ? count($rowsRaw) : count(explode(',', $rowsRaw)));
+                            @endphp
                             <div class="table-wrapper">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            @php 
-                                                $meta = is_array($q->meta_params) ? $q->meta_params : [];
-                                                $colsRaw = $meta['columns'] ?? 'નામ,સંબંધ,ઉંમર,શિક્ષણ';
-                                                $cols = is_array($colsRaw) ? $colsRaw : explode(',', $colsRaw);
-                                                $rowsRaw = $meta['rows'] ?? '5';
-                                                $rows = is_numeric($rowsRaw) ? range(1, (int)$rowsRaw) : (is_array($rowsRaw) ? $rowsRaw : explode(',', $rowsRaw));
-                                            @endphp
-                                            @foreach($cols as $col)
-                                                <th class="t" data-en="{{ trim($col) }}">{{ trim($col) }}</th>
-                                            @endforeach
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($rows as $rowIdx => $rowVal)
-                                        <tr>
-                                            <td>{{ $rowVal }}</td>
-                                            @foreach($cols as $colIdx => $colVal)
-                                                <td><input type="text" name="q_{{ $q->id }}[{{ $rowIdx }}][{{ trim($colVal) }}]"></td>
-                                            @endforeach
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                <div id="tabulator-q-{{ $q->id }}" class="question-tabulator"></div>
+                                <input type="hidden" name="q_{{ $q->id }}" id="hidden-q-{{ $q->id }}">
                             </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    let colNames = @json($cols);
+                                    let qId = "{{ $q->id }}";
+                                    let rowsCount = {{ $rowsCount }};
+
+                                    let tabCols = colNames.map(c => {
+                                        return {
+                                            title: c, 
+                                            field: c, 
+                                            editor: "input", 
+                                            headerSort: false,
+                                            formatter: "html",
+                                            // Handle english/gujarati label parsing if needed, but defaults are fine
+                                        };
+                                    });
+
+                                    let initialData = [];
+                                    let isEdit = window.adminEditData && window.adminEditData['q_' + qId];
+                                    
+                                    if (isEdit) {
+                                        initialData = window.adminEditData['q_' + qId];
+                                    } else {
+                                        // Generate empty rows
+                                        for(let i=1; i<=rowsCount; i++) {
+                                            let r = {};
+                                            colNames.forEach(c => r[c] = "");
+                                            initialData.push(r);
+                                        }
+                                    }
+
+                                    let table = new Tabulator("#tabulator-q-" + qId, {
+                                        data: initialData,
+                                        layout: "fitColumns",
+                                        columns: tabCols,
+                                        history: true,
+                                    });
+
+                                    function syncHidden() {
+                                        document.getElementById('hidden-q-' + qId).value = JSON.stringify(table.getData());
+                                    }
+
+                                    table.on("tableBuilt", function() {
+                                        syncHidden(); // Ensure form can be submitted immediately
+                                    });
+
+                                    table.on("cellEdited", function(){ syncHidden(); });
+                                    table.on("rowAdded", function(){ syncHidden(); });
+                                    table.on("rowDeleted", function(){ syncHidden(); });
+                                });
+                            </script>
                             @break
                     @endswitch
                 </div>
