@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==================================================
        FORM SUBMIT
     ================================================== */
-    form.addEventListener('submit', async e => {
+       form.addEventListener('submit', async e => {
         e.preventDefault();
         if (!validate(steps[current])) return;
 
@@ -85,7 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const formData = new FormData(form);
             const editMode = form.dataset.editMode === 'true';
-            const url = editMode ? form.dataset.updateUrl : (form.dataset.submitUrl || window.location.pathname);
+            
+            // This is the absolute fix: It uses the EXACT URL of your page for the POST
+            const url = editMode ? form.dataset.updateUrl : window.location.href.split('?')[0];
             
             if (editMode) {
                 formData.append('_method', 'PUT');
@@ -99,6 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: formData
             });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error("Server Error " + response.status);
+            }
 
             const result = await response.json();
 

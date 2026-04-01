@@ -29,11 +29,11 @@ class QuestionnaireController extends Controller
 
             foreach ($request->all() as $key => $value) {
                 if (str_starts_with($key, 'q_')) {
-                    // Get only the numeric part (e.g. from q_48 or q_48[])
                     $qIdString = str_replace('q_', '', $key);
-                    $questionId = (int) preg_replace('/[^0-9]/', '', $qIdString);
-                    
-                    if ($questionId <= 0) continue;
+                    $questionId = (int)preg_replace('/[^0-9]/', '', $qIdString);
+
+                    if ($questionId <= 0)
+                        continue;
 
                     $answerText = is_array($value) ? json_encode($value) : $value;
 
@@ -41,7 +41,7 @@ class QuestionnaireController extends Controller
                         \App\Models\Answer::create([
                             'response_id' => $response->id,
                             'question_id' => $questionId,
-                            'answer_value' => (string) $answerText,
+                            'answer_value' => (string)$answerText,
                         ]);
                     }
                 }
@@ -50,4 +50,5 @@ class QuestionnaireController extends Controller
             return response()->json(['success' => true]);
         });
     }
+
 }
