@@ -58,8 +58,9 @@
             @endif
         </div>
         @if($ans->reason)
+            @php $reasonLbl = !empty($ans->question->meta_params['reason_label']) ? $ans->question->meta_params['reason_label'] : 'શા માટે? (Reason)'; @endphp
             <div style="background: #fdf5e6; padding: 0.75rem; border: 1px solid #fed7aa; border-radius: 6px; font-size: 0.85rem; margin-top: 0.5rem; color: #9a3412;">
-                <strong>શા માટે? (Reason):</strong> {{ $ans->reason }}
+                <strong>{{ $reasonLbl }}:</strong> {{ $ans->reason }}
             </div>
         @endif
     </div>

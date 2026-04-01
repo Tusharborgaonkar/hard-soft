@@ -56,10 +56,14 @@
             </div>
             <div style="display:flex; align-items:flex-end;">
                 <label style="display:flex; align-items:center; cursor:pointer;">
-                    <input type="checkbox" name="meta_params[has_reason]" value="1" style="margin-right:0.5rem;">
+                    <input type="checkbox" name="meta_params[has_reason]" value="1" style="margin-right:0.5rem;" onchange="document.getElementById('reason-label-container').style.display = this.checked ? 'block' : 'none'">
                     Enable 'શા માટે?' (Why?)
                 </label>
             </div>
+        </div>
+        <div id="reason-label-container" style="margin-top: 1.5rem; display: none;">
+            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Custom Text Field Label</label>
+            <input type="text" name="meta_params[reason_label]" placeholder="If blank, defaults to: શા માટે ? (Why?)" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
         </div>
     </div>
 
