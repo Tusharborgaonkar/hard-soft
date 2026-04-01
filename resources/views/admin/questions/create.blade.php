@@ -37,7 +37,7 @@
             <textarea name="question_text_en" rows="3" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;"></textarea>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div>
                 <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Input Type</label>
                 <select name="type" id="type-select" required style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
@@ -52,12 +52,6 @@
                 <label style="display:flex; align-items:center; cursor:pointer;">
                     <input type="checkbox" name="is_required" value="1" style="margin-right:0.5rem;">
                     Required Field
-                </label>
-            </div>
-            <div style="display:flex; align-items:flex-end;">
-                <label style="display:flex; align-items:center; cursor:pointer;">
-                    <input type="checkbox" name="meta_params[has_reason]" value="1" style="margin-right:0.5rem;">
-                    Enable 'શા માટે?' (Why?)
                 </label>
             </div>
         </div>
