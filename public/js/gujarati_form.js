@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const formData = new FormData(form);
             const editMode = form.dataset.editMode === 'true';
-            const url = editMode ? form.dataset.updateUrl : (form.dataset.submitUrl || form.action || window.location.href);
+            const url = editMode ? form.dataset.updateUrl : (form.dataset.submitUrl || '/questionnaire');
             
             if (editMode) {
                 formData.append('_method', 'PUT');

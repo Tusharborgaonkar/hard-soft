@@ -64,10 +64,10 @@
         </div>
 
         {{-- FORM --}}
-        <form id="questionnaireForm" class="form-container" action="{{ route('questionnaire.store') }}" method="POST"
+        <form id="questionnaireForm" 
               data-edit-mode="{{ isset($editMode) ? 'true' : 'false' }}"
               data-update-url="{{ isset($response) ? route('admin.responses.update', $response->id) : '' }}"
-              data-submit-url="{{ route('questionnaire.store') }}">
+              data-submit-url="{{ url('/questionnaire') }}">
             @foreach($sections as $index => $section)
             <div class="form-step {{ $index === 0 ? 'active' : '' }}" id="step{{ $index }}">
                 <div class="section-header">
