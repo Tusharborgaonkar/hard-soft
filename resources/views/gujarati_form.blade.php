@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Gujarati:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/tabulator-tables@6.2.1/dist/css/tabulator.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.2.1/dist/js/tabulator.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/gujarati_form.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/gujarati_form.css') }}?v={{ filemtime(public_path('css/gujarati_form.css')) }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
@@ -140,7 +140,7 @@
                                             editor: "input", 
                                             headerSort: false,
                                             formatter: "html",
-                                            // Handle english/gujarati label parsing if needed, but defaults are fine
+                                            minWidth: 130
                                         };
                                     });
 
