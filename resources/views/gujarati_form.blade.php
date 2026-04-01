@@ -133,15 +133,41 @@
                                     let qId = "{{ $q->id }}";
                                     let rowsCount = {{ $rowsCount }};
 
-                                    let tabCols = colNames.map(c => {
-                                        return {
+                                    let tabCols = [
+                                        {
+                                            title: "#", 
+                                            field: "_row_idx", 
+                                            headerSort: false, 
+                                            width: 50,
+                                            hozAlign: "center",
+                                            formatter: function(cell) {
+                                                return `<div class="row-num">${cell.getValue() || ''}</div>`;
+                                            }
+                                        }
+                                    ];
+
+                                    colNames.forEach(c => {
+                                        tabCols.push({
                                             title: c, 
                                             field: c, 
-                                            editor: "input", 
                                             headerSort: false,
-                                            formatter: "html",
-                                            minWidth: 130
-                                        };
+                                            minWidth: 130,
+                                            formatter: function(cell, formatterParams, onRendered) {
+                                                // Create a persistent native input to match the classic form UI
+                                                let val = cell.getValue() || "";
+                                                let input = document.createElement("input");
+                                                input.type = "text";
+                                                input.value = val;
+                                                // The CSS file already styles .question-tabulator .tabulator-cell input[type="text"]
+                                                // So we don't need inline styles if we just return an input element.
+                                                
+                                                input.addEventListener("change", function() {
+                                                    cell.getRow().update({ [c]: input.value });
+                                                    syncHidden(); // Ensure hidden syncs immediately on our custom input change
+                                                });
+                                                return input;
+                                            }
+                                        });
                                     });
 
                                     let initialData = [];
@@ -152,7 +178,7 @@
                                     } else {
                                         // Generate empty rows
                                         for(let i=1; i<=rowsCount; i++) {
-                                            let r = {};
+                                            let r = { _row_idx: i }; // ensure _row_idx is seeded
                                             colNames.forEach(c => r[c] = "");
                                             initialData.push(r);
                                         }
@@ -173,9 +199,7 @@
                                         syncHidden(); // Ensure form can be submitted immediately
                                     });
 
-                                    table.on("cellEdited", function(){ syncHidden(); });
-                                    table.on("rowAdded", function(){ syncHidden(); });
-                                    table.on("rowDeleted", function(){ syncHidden(); });
+                                    table.on("dataChanged", function(){ syncHidden(); });
                                 });
                             </script>
                             @break
