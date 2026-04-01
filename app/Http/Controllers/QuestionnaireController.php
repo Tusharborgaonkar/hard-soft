@@ -22,33 +22,40 @@ class QuestionnaireController extends Controller
 
     public function store(Request $request)
     {
-        return DB::transaction(function () use ($request) {
-            $response = \App\Models\Response::create([
-                'user_identifier' => $request->ip(),
-            ]);
+        try {
+            return DB::transaction(function () use ($request) {
+                $response = \App\Models\Response::create([
+                    'user_identifier' => $request->ip(),
+                ]);
 
-            foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_')) {
-                    $qIdString = str_replace('q_', '', $key);
-                    $questionId = (int)preg_replace('/[^0-9]/', '', $qIdString);
+                foreach ($request->all() as $key => $value) {
+                    if (str_starts_with($key, 'q_')) {
+                        $qIdString = str_replace('q_', '', $key);
+                        $questionId = (int)preg_replace('/[^0-9]/', '', $qIdString);
 
-                    if ($questionId <= 0)
-                        continue;
+                        if ($questionId <= 0)
+                            continue;
 
-                    $answerText = is_array($value) ? json_encode($value) : $value;
+                        $answerText = is_array($value) ? json_encode($value) : $value;
 
-                    if ($answerText !== null && $answerText !== '') {
-                        \App\Models\Answer::create([
-                            'response_id' => $response->id,
-                            'question_id' => $questionId,
-                            'answer_value' => (string)$answerText,
-                        ]);
+                        if ($answerText !== null && $answerText !== '') {
+                            \App\Models\Answer::create([
+                                'response_id' => $response->id,
+                                'question_id' => $questionId,
+                                'answer_value' => (string)$answerText,
+                            ]);
+                        }
                     }
                 }
-            }
 
-            return response()->json(['success' => true]);
-        });
+                return response()->json(['success' => true]);
+            });
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Database Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 }

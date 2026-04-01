@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
         btnText.textContent = langSwitch.checked ? 'Saving...' : 'સાચવી રહ્યું છે...';
 
+        let response;
         try {
             const formData = new FormData(form);
             const editMode = form.dataset.editMode === 'true';
@@ -93,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('_method', 'PUT');
             }
 
-            const response = await fetch(url, {
+            response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -122,7 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(result.message || 'Submission failed');
             }
         } catch (err) {
-            console.error(err);
+            console.error('Submission Error:', err);
+            // Diagnostic logging to see what the server actually sent back
+            if (response && response.status) {
+                try {
+                    const text = await response.text();
+                    console.log('Server Status:', response.status);
+                    console.log('Server Body Snippet:', text.substring(0, 200));
+                } catch(e) { console.warn('Could not read response text'); }
+            }
             showToast(langSwitch.checked ? 'Error: ' + err.message : 'ભૂલ: ' + err.message, 'error');
             btn.disabled = false;
             btnText.textContent = originalText;
