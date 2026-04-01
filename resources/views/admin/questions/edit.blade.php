@@ -74,13 +74,20 @@
     {{-- Table Builder --}}
     <div id="table-config-container" class="card" style="display: {{ $question->type == 'table' ? 'block' : 'none' }}; margin-bottom: 2rem;">
         <h2 style="margin-bottom: 1rem;">Table Configuration</h2>
+        @php
+            $metaCols = $question->meta_params['columns'] ?? '';
+            $metaColsStr = is_array($metaCols) ? implode(',', $metaCols) : $metaCols;
+
+            $metaRows = $question->meta_params['rows'] ?? '';
+            $metaRowsStr = is_array($metaRows) ? implode(',', $metaRows) : $metaRows;
+        @endphp
         <div style="margin-bottom: 1.5rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Columns (Comma separated)</label>
-            <input type="text" name="meta_params[columns]" value="{{ $question->meta_params['columns'] ?? '' }}" placeholder="Name, Relation, Age, Education" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+            <input type="text" name="meta_params[columns]" value="{{ $metaColsStr }}" placeholder="Name, Relation, Age, Education" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
         </div>
         <div style="margin-bottom: 1.5rem;">
             <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Rows (Comma separated or number)</label>
-            <input type="text" name="meta_params[rows]" value="{{ $question->meta_params['rows'] ?? '' }}" placeholder="1, 2, 3, 4, 5" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
+            <input type="text" name="meta_params[rows]" value="{{ $metaRowsStr }}" placeholder="1, 2, 3, 4, 5" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
         </div>
     </div>
 
