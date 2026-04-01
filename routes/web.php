@@ -7,6 +7,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/run-migrations', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    return "Database tables successfully updated on production!";
+});
+
 Route::get('/questionnaire', [QuestionnaireController::class , 'index'])->name('questionnaire.index');
 Route::post('/questionnaire', [QuestionnaireController::class , 'store'])->name('questionnaire.store');
 
