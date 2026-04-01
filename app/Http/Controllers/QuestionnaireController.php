@@ -28,27 +28,16 @@ class QuestionnaireController extends Controller
                 'meta_data' => ['user_agent' => $request->userAgent()],
             ]);
 
-            // Separate reasons from primary answers
-            $reasons = [];
             foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_') && str_ends_with($key, '_reason')) {
-                    $qId = str_replace(['q_', '_reason'], '', $key);
-                    $reasons[$qId] = $value;
-                }
-            }
-
-            foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_') && !str_ends_with($key, '_reason')) {
+                if (str_starts_with($key, 'q_')) {
                     $questionId = str_replace('q_', '', $key);
                     $answerText = is_array($value) ? json_encode($value) : $value;
-                    $reasonText = $reasons[$questionId] ?? null;
 
-                    if (($answerText !== null && $answerText !== '') || ($reasonText !== null && $reasonText !== '')) {
+                    if ($answerText !== null && $answerText !== '') {
                         \App\Models\Answer::create([
                             'response_id' => $response->id,
                             'question_id' => (int)$questionId,
-                            'answer_value' => $answerText ?? '',
-                            'reason' => $reasonText,
+                            'answer_value' => $answerText,
                         ]);
                     }
                 }
