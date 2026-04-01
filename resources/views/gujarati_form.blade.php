@@ -206,12 +206,9 @@
                     @endswitch
 
                     @if(!empty($q->meta_params['has_reason']))
-                        @php
-                            $reasonLabel = !empty($q->meta_params['reason_label']) ? $q->meta_params['reason_label'] : 'શા માટે ? (Why?)';
-                        @endphp
                         <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed #e5e7eb;">
                             <label style="display:block; font-size:0.9rem; font-weight:600; margin-bottom:0.8rem; color: var(--text-dark);">
-                                {{ $reasonLabel }}
+                                શા માટે ? (Why?)
                             </label>
                             <input type="text" name="q_{{ $q->id }}_reason" value="{{ $editData['q_'.$q->id.'_reason'] ?? '' }}" placeholder="..." style="width:100%; padding:0.8rem 1rem; border:1.5px solid var(--input-border); border-radius:var(--radius-sm); font-family:inherit; font-size:0.95rem; transition:border-color 0.2s; outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--input-border)'">
                         </div>

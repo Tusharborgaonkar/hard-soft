@@ -57,13 +57,9 @@
             <div style="display:flex; align-items:flex-end;">
                 <label style="display:flex; align-items:center; cursor:pointer;">
                     <input type="checkbox" name="meta_params[has_reason]" value="1" {{ !empty($question->meta_params['has_reason']) ? 'checked' : '' }} style="margin-right:0.5rem;">
-                    Enable Extra Text Box
+                    Enable 'શા માટે?' (Why?)
                 </label>
             </div>
-        </div>
-        <div style="margin-top: 1.5rem;">
-            <label style="display:block; margin-bottom:0.5rem; font-weight:600;">Extra Text Field Label (e.g. શા માટે?)</label>
-            <input type="text" name="meta_params[reason_label]" value="{{ $question->meta_params['reason_label'] ?? '' }}" placeholder="If blank, defaults to: શા માટે ? (Why?)" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:8px;">
         </div>
     </div>
 
