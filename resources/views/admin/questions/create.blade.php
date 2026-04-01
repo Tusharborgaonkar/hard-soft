@@ -54,6 +54,12 @@
                     Required Field
                 </label>
             </div>
+            <div style="display:flex; align-items:flex-end;">
+                <label style="display:flex; align-items:center; cursor:pointer;">
+                    <input type="checkbox" name="meta_params[has_reason]" value="1" style="margin-right:0.5rem;">
+                    Enable 'શા માટે?' (Why?)
+                </label>
+            </div>
         </div>
     </div>
 

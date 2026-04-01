@@ -189,6 +189,10 @@ class AdminController extends Controller
             else {
                 $editData['q_' . $ans->question_id] = $val;
             }
+
+            if (!empty($ans->reason)) {
+                $editData['q_' . $ans->question_id . '_reason'] = $ans->reason;
+            }
         }
 
         $editMode = true;
@@ -201,15 +205,25 @@ class AdminController extends Controller
         return DB::transaction(function () use ($request, $id) {
             $response = Response::findOrFail($id);
 
+            // Separate reasons from primary answers
+            $reasons = [];
             foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_')) {
+                if (str_starts_with($key, 'q_') && str_ends_with($key, '_reason')) {
+                    $qId = str_replace(['q_', '_reason'], '', $key);
+                    $reasons[$qId] = $value;
+                }
+            }
+
+            foreach ($request->all() as $key => $value) {
+                if (str_starts_with($key, 'q_') && !str_ends_with($key, '_reason')) {
                     $questionId = str_replace('q_', '', $key);
                     $answerText = is_array($value) ? json_encode($value) : $value;
+                    $reasonText = $reasons[$questionId] ?? null;
 
-                    if ($answerText !== null && $answerText !== '') {
+                    if (($answerText !== null && $answerText !== '') || ($reasonText !== null && $reasonText !== '')) {
                         Answer::updateOrCreate(
-                        ['response_id' => $response->id, 'question_id' => (int)$questionId],
-                        ['answer_value' => $answerText]
+                            ['response_id' => $response->id, 'question_id' => (int)$questionId],
+                            ['answer_value' => $answerText ?? '', 'reason' => $reasonText]
                         );
                     }
                     else {

@@ -10,6 +10,7 @@ class Answer extends Model
         'response_id',
         'question_id',
         'answer_value',
+        'reason',
     ];
 
     public function response()

@@ -57,6 +57,11 @@
                 {{ $val }}
             @endif
         </div>
+        @if($ans->reason)
+            <div style="background: #fdf5e6; padding: 0.75rem; border: 1px solid #fed7aa; border-radius: 6px; font-size: 0.85rem; margin-top: 0.5rem; color: #9a3412;">
+                <strong>શા માટે? (Reason):</strong> {{ $ans->reason }}
+            </div>
+        @endif
     </div>
     @endforeach
 </div>
