@@ -180,22 +180,10 @@ class AdminController extends Controller
             $val = $ans->answer_value;
             $decoded = json_decode($val, true);
             if (is_array($decoded)) {
-                if ($ans->question->type === 'checkbox') {
-                    $editData['q_' . $ans->question_id . '[]'] = $decoded;
-                }
-                else if ($ans->question->type === 'table') {
-                    $editData['q_' . $ans->question_id] = $decoded;
-                }
-                else {
-                    $editData['q_' . $ans->question_id] = $decoded;
-                }
+                $editData['q_' . $ans->question_id] = $decoded;
             }
             else {
                 $editData['q_' . $ans->question_id] = $val;
-            }
-
-            if (!empty($ans->reason)) {
-                $editData['q_' . $ans->question_id . '_reason'] = $ans->reason;
             }
         }
 
@@ -209,30 +197,23 @@ class AdminController extends Controller
         return DB::transaction(function () use ($request, $id) {
             $response = Response::findOrFail($id);
 
-            // Separate reasons from primary answers
-            $reasons = [];
             foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_') && str_ends_with($key, '_reason')) {
-                    $qId = str_replace(['q_', '_reason'], '', $key);
-                    $reasons[$qId] = $value;
-                }
-            }
+                if (str_starts_with($key, 'q_')) {
+                    $qIdString = str_replace('q_', '', $key);
+                    $questionId = (int) preg_replace('/[^0-9]/', '', $qIdString);
+                    
+                    if ($questionId <= 0) continue;
 
-            foreach ($request->all() as $key => $value) {
-                if (str_starts_with($key, 'q_') && !str_ends_with($key, '_reason')) {
-                    $questionId = str_replace('q_', '', $key);
                     $answerText = is_array($value) ? json_encode($value) : $value;
-                    $reasonText = $reasons[$questionId] ?? null;
 
-                    if (($answerText !== null && $answerText !== '') || ($reasonText !== null && $reasonText !== '')) {
+                    if ($answerText !== null && $answerText !== '') {
                         Answer::updateOrCreate(
-                            ['response_id' => $response->id, 'question_id' => (int)$questionId],
-                            ['answer_value' => $answerText ?? '', 'reason' => $reasonText]
+                            ['response_id' => $response->id, 'question_id' => $questionId],
+                            ['answer_value' => (string) $answerText]
                         );
                     }
                     else {
-                        // If empty but exists, we might want to delete it or leave empty
-                        Answer::where('response_id', $response->id)->where('question_id', (int)$questionId)->delete();
+                        Answer::where('response_id', $response->id)->where('question_id', $questionId)->delete();
                     }
                 }
             }
