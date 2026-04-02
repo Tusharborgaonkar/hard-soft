@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionnaireController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('questionnaire.index');
 });
 
 Route::get('/run-migrations', function () {
