@@ -245,10 +245,10 @@
             <div class="success-icon">✓</div>
             <h2 class="t" data-en="Submitted Successfully!" style="color:var(--success);font-size:1.6rem;margin-bottom:.5rem">સફળતાપૂર્વક સબમિટ!</h2>
             <p class="t" data-en="Thank you for completing the questionnaire." style="color:var(--text-muted);margin-bottom:2rem">પ્રશ્નાવલી ભરવા બદલ ધન્યવાદ.</p>
-            <button type="button" class="btn btn-prev" id="fillAnotherBtn" style="text-decoration:none;display:inline-flex;cursor:pointer;border:1px solid #e2e8f0;background:#f8fafc;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <a href="{{ url('/questionnaire?reset=1') }}" class="btn btn-prev" id="fillAnotherBtn" onclick="localStorage.removeItem('guj_step'); localStorage.removeItem('guj_form_data');" style="text-decoration:none;display:inline-flex;cursor:pointer;border:1px solid #e2e8f0;background:#f8fafc;padding:0.75rem 1.5rem;border-radius:12px;color:var(--primary);font-weight:600;gap:0.5rem;align-items:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:20px;height:20px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span class="t" data-en="Fill Another Form">નવું ફોર્મ ભરો</span>
-            </button>
+            </a>
         </div>
 
     </div>{{-- /form-inner --}}
