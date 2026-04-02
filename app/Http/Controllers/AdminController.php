@@ -159,7 +159,7 @@ class AdminController extends Controller
 
     public function showResponse($id)
     {
-        $response = Response::with(['answers.question'])->findOrFail($id);
+        $response = Response::with(['answers.question.options'])->findOrFail($id);
         return view('admin.responses.show', compact('response'));
     }
 
