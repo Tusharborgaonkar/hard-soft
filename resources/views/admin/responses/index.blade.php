@@ -22,7 +22,7 @@
                 <td>#{{ $resp->id }}</td>
                 <td>{{ $resp->user_identifier }}</td>
                 <td>{{ $resp->answers_count }}</td>
-                <td>{{ $resp->created_at->format('M d, Y H:i') }}</td>
+                <td>{{ $resp->created_at->format('M d, Y') }}</td>
                 <td>
                     <div style="display: flex; gap: 0.5rem;">
                         <a href="{{ route('admin.responses.show', $resp->id) }}" class="btn btn-primary btn-sm">View</a>
