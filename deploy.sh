@@ -18,6 +18,9 @@ echo "📦 Installing composer dependencies"
 composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
 echo "🧹 Pre-migration cache cleaning"
+# Delete existing cache files manually to prevent PailServiceProvider error
+rm -f bootstrap/cache/*.php
+
 # Clear caches BEFORE migration to prevent bootstrap errors
 php artisan config:clear
 php artisan route:clear
