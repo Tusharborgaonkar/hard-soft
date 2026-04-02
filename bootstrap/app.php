@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->validateCsrfTokens(except: [
+            '/questionnaire',
+            '/admin/responses/*', // Also exclude admin edits to be safe
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
