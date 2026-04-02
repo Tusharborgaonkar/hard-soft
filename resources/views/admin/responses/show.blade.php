@@ -64,20 +64,23 @@
                                 // Filter out technical keys like _row_idx
                                 $headers = array_filter($headers, fn($h) => !str_starts_with($h, '_'));
                             @endphp
-                            <div class="table-responsive" style="margin-top: 0.5rem; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
-                                <table style="margin: 0; min-width: 100%;">
-                                    <thead style="background: #f8fafc;">
+                            <div class="table-responsive" style="margin-top: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff;">
+                                <table style="margin: 0; min-width: 100%; border-collapse: separate; border-spacing: 0;">
+                                    <thead style="background: #f1f5f9;">
                                         <tr>
                                             @foreach($headers as $h)
-                                            <th style="padding: 0.5rem 1rem; font-size: 0.75rem; text-transform: uppercase;">{{ $h }}</th>
+                                            <th style="padding: 0.75rem 1rem; font-size: 0.7rem; text-transform: uppercase; color: #475569; letter-spacing: 0.05em; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0;">{{ $h }}</th>
                                             @endforeach
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($decoded as $row)
-                                        <tr>
+                                        <tr style="background: {{ $loop->even ? '#f8fafc' : '#fff' }};">
                                             @foreach($headers as $h)
-                                            <td style="padding: 0.5rem 1rem; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9;">{{ $row[$h] ?? '-' }}</td>
+                                            @php $cellValue = trim($row[$h] ?? ''); @endphp
+                                            <td style="padding: 0.75rem 1rem; font-size: 0.85rem; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: {{ $cellValue === '' ? '#cbd5e1' : '#1e293b' }};">
+                                                {{ $cellValue ?: 'No record' }}
+                                            </td>
                                             @endforeach
                                         </tr>
                                         @endforeach

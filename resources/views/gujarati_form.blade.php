@@ -152,20 +152,9 @@
                                             field: c, 
                                             headerSort: false,
                                             minWidth: 130,
-                                            formatter: function(cell, formatterParams, onRendered) {
-                                                // Create a persistent native input to match the classic form UI
-                                                let val = cell.getValue() || "";
-                                                let input = document.createElement("input");
-                                                input.type = "text";
-                                                input.value = val;
-                                                // The CSS file already styles .question-tabulator .tabulator-cell input[type="text"]
-                                                // So we don't need inline styles if we just return an input element.
-                                                
-                                                input.addEventListener("change", function() {
-                                                    cell.getRow().update({ [c]: input.value });
-                                                    syncHidden(); // Ensure hidden syncs immediately on our custom input change
-                                                });
-                                                return input;
+                                            editor: "input", // Switch to built-in editor for absolute reliability
+                                            cellEdited: function(cell) {
+                                                syncHidden();
                                             }
                                         });
                                     });
@@ -184,7 +173,8 @@
                                         }
                                     }
 
-                                    let table = new Tabulator("#tabulator-q-" + qId, {
+                                    if (!window.formTables) window.formTables = {};
+                                    window.formTables[qId] = new Tabulator("#tabulator-q-" + qId, {
                                         data: initialData,
                                         layout: "fitColumns",
                                         columns: tabCols,
@@ -192,14 +182,27 @@
                                     });
 
                                     function syncHidden() {
-                                        document.getElementById('hidden-q-' + qId).value = JSON.stringify(table.getData());
+                                        let table = window.formTables[qId];
+                                        if (table) {
+                                            document.getElementById('hidden-q-' + qId).value = JSON.stringify(table.getData());
+                                        }
                                     }
 
-                                    table.on("tableBuilt", function() {
-                                        syncHidden(); // Ensure form can be submitted immediately
-                                    });
+                                    // Add to global sync function
+                                    if (!window.syncAllTables) {
+                                        window.syncAllTables = function() {
+                                            if (window.formTables) {
+                                                Object.keys(window.formTables).forEach(id => {
+                                                    let tbl = window.formTables[id];
+                                                    document.getElementById('hidden-q-' + id).value = JSON.stringify(tbl.getData());
+                                                });
+                                            }
+                                        };
+                                    }
 
-                                    table.on("dataChanged", function(){ syncHidden(); });
+                                    window.formTables[qId].on("tableBuilt", syncHidden);
+                                    window.formTables[qId].on("dataChanged", syncHidden);
+                                    window.formTables[qId].on("cellEdited", syncHidden);
                                 });
                             </script>
                             @break

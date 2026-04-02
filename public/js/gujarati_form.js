@@ -85,6 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('--- Submission Started ---');
         let response;
         try {
+            // Final sync for all dynamic tables before capturing FormData
+            if (typeof window.syncAllTables === 'function') {
+                window.syncAllTables();
+            }
+
             const formData = new FormData(form);
             const editMode = form.dataset.editMode === 'true';
             
