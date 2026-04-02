@@ -221,4 +221,10 @@ class AdminController extends Controller
             return response()->json(['success' => true]);
         });
     }
+    public function destroyResponse($id)
+    {
+        $response = Response::findOrFail($id);
+        $response->delete();
+        return redirect()->route('admin.responses')->with('success', 'Response deleted successfully (Soft Deleted)');
+    }
 }

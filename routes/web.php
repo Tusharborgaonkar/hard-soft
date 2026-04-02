@@ -48,4 +48,5 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/responses/{id}', [\App\Http\Controllers\AdminController::class , 'showResponse'])->name('admin.responses.show');
         Route::get('/responses/{id}/edit', [\App\Http\Controllers\AdminController::class , 'editResponse'])->name('admin.responses.edit');
         Route::put('/responses/{id}', [\App\Http\Controllers\AdminController::class , 'updateResponse'])->name('admin.responses.update');
+        Route::delete('/responses/{id}', [\App\Http\Controllers\AdminController::class , 'destroyResponse'])->name('admin.responses.destroy');
     });

@@ -24,7 +24,14 @@
                 <td>{{ $resp->answers_count }}</td>
                 <td>{{ $resp->created_at->format('M d, Y H:i') }}</td>
                 <td>
-                    <a href="{{ route('admin.responses.show', $resp->id) }}" class="btn btn-primary btn-sm">View Details</a>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ route('admin.responses.show', $resp->id) }}" class="btn btn-primary btn-sm">View</a>
+                        <form action="{{ route('admin.responses.destroy', $resp->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this response? This cannot be undone from the dashboard.');" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm" style="background: var(--danger); color: #fff;">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach
