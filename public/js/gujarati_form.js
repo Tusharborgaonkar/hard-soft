@@ -362,4 +362,22 @@ document.addEventListener('DOMContentLoaded', () => {
         toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
+    /* ==================================================
+       RESET / FILL ANOTHER FORM
+    ================================================== */
+    const fillAnotherBtn = document.getElementById('fillAnotherBtn');
+    if (fillAnotherBtn) {
+        fillAnotherBtn.addEventListener('click', (e) => {
+            // Only if not in edit mode
+            if (form.dataset.editMode !== 'true') {
+                localStorage.removeItem('guj_step');
+                localStorage.removeItem('guj_form_data');
+                // Nuking everything related to this form
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('guj_')) localStorage.removeItem(key);
+                });
+            }
+        });
+    }
+
 });
