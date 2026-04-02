@@ -6,6 +6,17 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    /* ---- Absolute Reset Filter ---- */
+    if (window.location.search.includes('reset=1')) {
+        localStorage.removeItem('guj_step');
+        localStorage.removeItem('guj_form_data');
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('guj_')) localStorage.removeItem(key);
+        });
+        // Redirect to clean the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     /* ---- References ---- */
     const steps        = document.querySelectorAll('.form-step');
     const stepItems    = document.querySelectorAll('.step-item');
