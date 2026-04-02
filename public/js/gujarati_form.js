@@ -82,18 +82,23 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.disabled = true;
         btnText.textContent = langSwitch.checked ? 'Saving...' : 'સાચવી રહ્યું છે...';
 
+        console.log('--- Submission Started ---');
         let response;
         try {
             const formData = new FormData(form);
             const editMode = form.dataset.editMode === 'true';
             
             // This is the absolute fix: It uses the EXACT URL of your page for the POST
-            const url = editMode ? form.dataset.updateUrl : window.location.href.split('?')[0];
+            const url = editMode ? form.dataset.updateUrl : (form.dataset.submitUrl || window.location.href.split('?')[0]);
+            
+            console.log('Target URL:', url);
+            console.log('Edit Mode:', editMode);
             
             if (editMode) {
                 formData.append('_method', 'PUT');
             }
 
+            console.log('Sending request...');
             response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -103,12 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: formData
             });
 
+            console.log('Response received. Status:', response.status);
+
             if (!response.ok) {
                 const text = await response.text();
+                console.error('Server Error Response:', text.substring(0, 500));
                 throw new Error("Server Error " + response.status);
             }
 
+            console.log('Parsing JSON result...');
             const result = await response.json();
+            console.log('Result Success:', result.success);
 
             if (result.success) {
                 form.style.display = 'none';
