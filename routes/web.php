@@ -3,9 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionnaireController;
 
-Route::get('/', function () {
-    return redirect()->route('questionnaire.index');
-});
+Route::get('/', [QuestionnaireController::class, 'index']);
 
 Route::get('/run-migrations', function () {
     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
