@@ -9,7 +9,7 @@
     <table class="tabulator-auto">
         <thead>
             <tr>
-                <th>ID</th>
+                <th data-tabulator-sorter="number">ID</th>
                 <th>IP Address</th>
                 <th>Answers</th>
                 <th>Submitted At</th>
