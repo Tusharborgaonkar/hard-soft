@@ -38,8 +38,8 @@
         </tbody>
     </table>
     </div>
-    <div style="margin-top: 1rem;">
-        {{ $responses->links() }}
+    <div style="margin-top: 1.5rem;">
+        {{ $responses->links('vendor.pagination.vanilla') }}
     </div>
 </div>
 @endsection

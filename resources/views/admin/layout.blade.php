@@ -60,6 +60,57 @@
         .tabulator-row:hover { background-color: var(--white) !important; }
         .tabulator-row:hover .tabulator-cell { background: #f8fafc !important; }
         .tabulator-row.tabulator-row-moving { border: 1px solid var(--primary); background: #fff !important; opacity: 0.9; }
+
+        /* Premium Vanilla Pagination System */
+        .vanilla-pagination { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+        .pagination-info { font-size: 0.875rem; color: var(--text-light); font-weight: 500; }
+        
+        .pagination-wrapper { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+        
+        .pagination-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .pagination-item svg { width: 1.1rem; height: 1.1rem; stroke-width: 2; }
+        
+        /* Hover State for links */
+        a.pagination-item:hover { 
+            border-color: var(--primary); 
+            color: var(--primary); 
+            background: #fff;
+        }
+
+        /* Active State */
+        .pagination-item.active {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: #fff !important;
+            pointer-events: none;
+        }
+
+        /* Disabled State */
+        .pagination-item.disabled {
+            opacity: 0.5;
+            background: #f8fafc;
+            border-color: #f1f5f9;
+            cursor: not-allowed;
+            color: #94a3b8;
+        }
         
         .badge { padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
         .badge-success { background: #d1fae5; color: #065f46; }
