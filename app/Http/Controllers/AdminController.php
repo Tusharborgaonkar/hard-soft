@@ -154,7 +154,7 @@ class AdminController extends Controller
     public function responses()
     {
         $responses = Response::withCount('answers')
-            ->orderByRaw('CAST(COALESCE(NULLIF(response_number, ""), id) AS UNSIGNED) ASC')
+            ->orderByRaw('CAST(response_number AS UNSIGNED) ASC')
             ->paginate(20);
         return view('admin.responses.index', compact('responses'));
     }
@@ -196,6 +196,10 @@ class AdminController extends Controller
 
     public function updateResponse(Request $request, $id)
     {
+        $request->validate([
+            'response_number' => 'required|numeric|unique:responses,response_number,' . $id
+        ]);
+
         return DB::transaction(function () use ($request, $id) {
             $response = Response::findOrFail($id);
             

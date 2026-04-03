@@ -9,7 +9,7 @@
     <table class="tabulator-auto">
         <thead>
             <tr>
-                <th data-tabulator-sorter="number">ID</th>
+                <th>ID</th>
                 <th>IP Address</th>
                 <th>Answers</th>
                 <th>Submitted At</th>
@@ -19,7 +19,7 @@
         <tbody>
             @foreach($responses as $resp)
             <tr>
-                <td>{{ $resp->response_number ?? ($responses->firstItem() + $loop->index) }}</td>
+                <td>{{ $resp->response_number }}</td>
                 <td>{{ $resp->user_identifier }}</td>
                 <td>{{ $resp->answers_count }}</td>
                 <td>{{ $resp->created_at->format('M d, Y') }}</td>

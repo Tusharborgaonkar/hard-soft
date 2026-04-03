@@ -33,7 +33,7 @@
         <tbody>
             @foreach($stats['recent_responses'] as $resp)
             <tr>
-                <td>{{ $resp->response_number ?? ($stats['total_responses'] - $loop->index) }}</td>
+                <td>{{ $resp->response_number }}</td>
                 <td>{{ $resp->user_identifier }}</td>
                 <td>{{ $resp->created_at->diffForHumans() }}</td>
                 <td>

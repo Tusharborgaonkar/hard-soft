@@ -22,6 +22,10 @@ class QuestionnaireController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'response_number' => 'required|numeric|unique:responses,response_number'
+        ]);
+
         try {
             return DB::transaction(function () use ($request) {
                 $response = \App\Models\Response::create([

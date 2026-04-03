@@ -30,7 +30,7 @@
         {{-- Edit Banner --}}
         @if(isset($editMode) && $editMode)
         <div style="background: var(--warning); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; display: flex; justify-content: space-between;">
-            <span>Editing Response #{{ $response->id }}</span>
+            <span>Editing Response #{{ $response->response_number }}</span>
             <a href="{{ route('admin.responses.show', $response->id) }}" style="color: #fff; text-decoration: underline;">Cancel Edit</a>
         </div>
         @endif
