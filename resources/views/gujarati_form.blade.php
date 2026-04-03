@@ -68,6 +68,12 @@
               data-edit-mode="{{ isset($editMode) ? 'true' : 'false' }}"
               data-update-url="{{ isset($response) ? route('admin.responses.update', $response->id) : '' }}"
               data-submit-url="{{ route('questionnaire.store') }}">
+
+            {{-- Manual Response ID --}}
+            <div class="response-number-box">
+                <label class="t" data-en="Response No.">ક્રમ નં.</label>
+                <input type="number" name="response_number" id="manual_response_number" placeholder="..." min="1" max="999" maxlength="3" oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3);" value="{{ $response->response_number ?? '' }}">
+            </div>
             @foreach($sections as $index => $section)
             <div class="form-step {{ $index === 0 ? 'active' : '' }}" id="step{{ $index }}">
                 <div class="section-header">

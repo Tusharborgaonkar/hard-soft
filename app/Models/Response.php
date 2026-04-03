@@ -10,6 +10,7 @@ class Response extends Model
     use SoftDeletes;
     protected $fillable = [
         'user_identifier',
+        'response_number',
     ];
 
     public function answers()

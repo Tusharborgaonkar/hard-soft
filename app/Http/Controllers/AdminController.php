@@ -196,6 +196,9 @@ class AdminController extends Controller
     {
         return DB::transaction(function () use ($request, $id) {
             $response = Response::findOrFail($id);
+            
+            // Allow updating the manual response number
+            $response->update(['response_number' => $request->input('response_number')]);
 
             foreach ($request->all() as $key => $value) {
                 if (str_starts_with($key, 'q_')) {

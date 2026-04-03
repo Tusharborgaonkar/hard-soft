@@ -26,6 +26,7 @@ class QuestionnaireController extends Controller
             return DB::transaction(function () use ($request) {
                 $response = \App\Models\Response::create([
                     'user_identifier' => $request->ip(),
+                    'response_number' => $request->input('response_number'),
                 ]);
 
                 foreach ($request->all() as $key => $value) {
