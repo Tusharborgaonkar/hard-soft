@@ -19,7 +19,7 @@
         <tbody>
             @foreach($responses as $resp)
             <tr>
-                <td>{{ $resp->response_number ?? ($responses->total() - ($responses->firstItem() + $loop->index - 1)) }}</td>
+                <td>{{ $resp->response_number ?? ($responses->firstItem() + $loop->index) }}</td>
                 <td>{{ $resp->user_identifier }}</td>
                 <td>{{ $resp->answers_count }}</td>
                 <td>{{ $resp->created_at->format('M d, Y') }}</td>

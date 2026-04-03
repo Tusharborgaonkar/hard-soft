@@ -153,7 +153,7 @@ class AdminController extends Controller
 
     public function responses()
     {
-        $responses = Response::withCount('answers')->latest()->paginate(20);
+        $responses = Response::withCount('answers')->orderBy('id', 'asc')->paginate(20);
         return view('admin.responses.index', compact('responses'));
     }
 
