@@ -12,7 +12,7 @@
     <div style="margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
             <div>
-                <h2 style="font-size: 1.5rem; color: var(--sidebar); margin-bottom: 0.25rem;">Response {{ $response->response_number ?? '#' . $response->id }}</h2>
+                <h2 style="font-size: 1.5rem; color: var(--sidebar); margin-bottom: 0.25rem;">Response#{{ $response->response_number ?? \App\Models\Response::where('id', '<=', $response->id)->count() }}</h2>
                 <div style="display: flex; gap: 1rem; color: var(--text-light); font-size: 0.85rem;">
                     <span><strong>IP Address:</strong> {{ $response->user_identifier }}</span>
                     <span><strong>Submitted:</strong> {{ $response->created_at->format('M d, Y | h:i A') }}</span>
