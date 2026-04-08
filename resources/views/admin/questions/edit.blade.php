@@ -62,6 +62,8 @@
         <div id="options-list">
             @foreach($question->options as $idx => $opt)
             <div style="display: grid; grid-template-columns: 1fr 1fr 50px; gap: 1rem; margin-bottom: 1rem;">
+                <input type="hidden" name="options[{{ $idx }}][id]" value="{{ $opt->id }}">
+                <input type="hidden" name="options[{{ $idx }}][order]" value="{{ $opt->order ?? $idx }}">
                 <input type="text" name="options[{{ $idx }}][gu]" value="{{ $opt->option_text_gu }}" placeholder="Option (Gujarati)" style="padding:0.5rem; border:1px solid #e2e8f0; border-radius:6px;">
                 <input type="text" name="options[{{ $idx }}][en]" value="{{ $opt->option_text_en }}" placeholder="Option (English)" style="padding:0.5rem; border:1px solid #e2e8f0; border-radius:6px;">
                 <button type="button" class="remove-option" style="background:#fee2e2; color:#b91c1c; border:none; border-radius:6px; cursor:pointer;">&times;</button>
@@ -122,6 +124,7 @@
         div.style.gap = '1rem';
         div.style.marginBottom = '1rem';
         div.innerHTML = `
+            <input type="hidden" name="options[${idx}][order]" value="${idx}">
             <input type="text" name="options[${idx}][gu]" value="${gu}" placeholder="Option (Gujarati)" style="padding:0.5rem; border:1px solid #e2e8f0; border-radius:6px;">
             <input type="text" name="options[${idx}][en]" value="${en}" placeholder="Option (English)" style="padding:0.5rem; border:1px solid #e2e8f0; border-radius:6px;">
             <button type="button" class="remove-option" style="background:#fee2e2; color:#b91c1c; border:none; border-radius:6px; cursor:pointer;">&times;</button>

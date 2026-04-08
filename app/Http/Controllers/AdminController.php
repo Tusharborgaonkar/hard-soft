@@ -63,13 +63,13 @@ class AdminController extends Controller
             $question = Question::create($data);
 
             if ($request->has('options')) {
-                foreach ($request->options as $opt) {
+                foreach ($request->options as $index => $opt) {
                     $gu = trim($opt['gu'] ?? '');
                     if ($gu !== '') {
                         $question->options()->create([
                             'option_text_gu' => $gu,
                             'option_text_en' => trim($opt['en'] ?? ''),
-                            'order' => (int)($opt['order'] ?? 0),
+                            'order' => (int)($opt['order'] ?? $index),
                         ]);
                     }
                 }
@@ -108,19 +108,42 @@ class AdminController extends Controller
 
             $question->update($data);
 
-            $question->options()->delete();
-
             if ($request->has('options')) {
-                foreach ($request->options as $opt) {
+                $submittedIds = [];
+                foreach ($request->options as $index => $opt) {
                     $gu = trim($opt['gu'] ?? '');
                     if ($gu !== '') {
-                        $question->options()->create([
-                            'option_text_gu' => $gu,
-                            'option_text_en' => trim($opt['en'] ?? ''),
-                            'order' => (int)($opt['order'] ?? 0),
-                        ]);
+                        if (isset($opt['id'])) {
+                            // Update existing
+                            $option = $question->options()->find($opt['id']);
+                            if ($option) {
+                                $option->update([
+                                    'option_text_gu' => $gu,
+                                    'option_text_en' => trim($opt['en'] ?? ''),
+                                    'order' => (int)($opt['order'] ?? $index),
+                                ]);
+                                $submittedIds[] = $option->id;
+                            } else {
+                                $newOpt = $question->options()->create([
+                                    'option_text_gu' => $gu,
+                                    'option_text_en' => trim($opt['en'] ?? ''),
+                                    'order' => (int)($opt['order'] ?? $index),
+                                ]);
+                                $submittedIds[] = $newOpt->id;
+                            }
+                        } else {
+                            $newOpt = $question->options()->create([
+                                'option_text_gu' => $gu,
+                                'option_text_en' => trim($opt['en'] ?? ''),
+                                'order' => (int)($opt['order'] ?? $index),
+                            ]);
+                            $submittedIds[] = $newOpt->id;
+                        }
                     }
                 }
+                $question->options()->whereNotIn('id', $submittedIds)->delete();
+            } else {
+                $question->options()->delete();
             }
         });
 
