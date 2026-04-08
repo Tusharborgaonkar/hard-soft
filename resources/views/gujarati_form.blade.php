@@ -272,13 +272,23 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
                 e.preventDefault();
-                // Find next button and click it to progress to next step
+                
+                // Find current active step
                 const currentStep = document.querySelector('.form-step.active');
-                if (currentStep) {
-                    const nextBtn = currentStep.querySelector('.btn-next');
-                    if (nextBtn) {
-                        nextBtn.click();
-                    }
+                if (!currentStep) return;
+
+                // Find all focusable inputs in this step
+                // (including input, select, textarea, but excluding hidden fields)
+                const inputs = Array.from(currentStep.querySelectorAll('input:not([type="hidden"]), select, textarea'));
+                const currentIndex = inputs.indexOf(e.target);
+
+                if (currentIndex > -1 && currentIndex < inputs.length - 1) {
+                    // Move focus to the next input field
+                    inputs[currentIndex + 1].focus();
+                } else if (currentIndex === inputs.length - 1) {
+                    // Optional: if it's the last input, we could stay or move to the "Next" button
+                    // The user specifically asked NOT to go to the next section automatically.
+                    // So we'll just blur or stay.
                 }
             }
         });
