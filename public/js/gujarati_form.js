@@ -82,7 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==================================================
        FORM SUBMIT
     ================================================== */
-       form.addEventListener('submit', async e => {
+    // Prevent Enter key from submitting the form (except in textareas)
+    form.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+        }
+    });
+
+    form.addEventListener('submit', async e => {
         e.preventDefault();
         if (!validate(steps[current])) return;
 
