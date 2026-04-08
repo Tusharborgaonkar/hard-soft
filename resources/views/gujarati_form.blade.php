@@ -264,6 +264,27 @@
 <div class="toast" id="toastMsg"></div>
 
 <script src="{{ asset('js/gujarati_form.js') }}?v={{ time() }}"></script>
+<script>
+// Production Hotfix: Prevent Enter key from submitting the form unexpectedly
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('questionnaireForm');
+    if (form) {
+        form.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                // Find next button and click it to progress to next step
+                const currentStep = document.querySelector('.form-step.active');
+                if (currentStep) {
+                    const nextBtn = currentStep.querySelector('.btn-next');
+                    if (nextBtn) {
+                        nextBtn.click();
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
 @if(isset($editMode) && $editMode)
 <script>
     window.adminEditData = {!! json_encode($editData ?? null) !!};
