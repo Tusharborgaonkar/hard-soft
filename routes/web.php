@@ -5,10 +5,6 @@ use App\Http\Controllers\QuestionnaireController;
 
 Route::get('/', [QuestionnaireController::class, 'index']);
 
-Route::get('/run-migrations', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-    return "Database tables successfully updated on production!";
-});
 
 Route::get('/questionnaire', [QuestionnaireController::class , 'index'])->name('questionnaire.index');
 Route::post('/questionnaire', [QuestionnaireController::class , 'store'])->name('questionnaire.store');
@@ -44,6 +40,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/questions/reorder', [\App\Http\Controllers\AdminController::class , 'reorderQuestions'])->name('admin.questions.reorder');
         Route::post('/questions/{id}/toggle', [\App\Http\Controllers\AdminController::class , 'toggleQuestion'])->name('admin.questions.toggle');
 
+        Route::get('/report', [\App\Http\Controllers\AdminController::class , 'report'])->name('admin.report');
         Route::get('/responses', [\App\Http\Controllers\AdminController::class , 'responses'])->name('admin.responses');
         Route::get('/responses/{id}', [\App\Http\Controllers\AdminController::class , 'showResponse'])->name('admin.responses.show');
         Route::get('/responses/{id}/edit', [\App\Http\Controllers\AdminController::class , 'editResponse'])->name('admin.responses.edit');

@@ -174,6 +174,65 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function report()
+    {
+        $responses = Response::with(['answers.question.options'])->orderByRaw('CAST(response_number AS UNSIGNED) ASC')->get();
+        $totalResponses = $responses->count();
+
+        $sections = \App\Models\Section::where('is_active', true)
+            ->with(['questions' => function ($query) {
+                $query->where('is_active', true)->with('options')->orderBy('order');
+            }])
+            ->orderBy('order')
+            ->get();
+
+        $optionCounts = []; // For Radio/Checkbox (Option ID based)
+        $textCounts = [];   // For Text/Number/Textarea (String based)
+
+        foreach ($responses as $response) {
+            foreach ($response->answers as $ans) {
+                if (!$ans->question) continue;
+
+                $rawVal = $ans->answer_value;
+                $normalizedVal = trim($rawVal);
+
+                if (in_array($ans->question->type, ['radio', 'checkbox'])) {
+                    $decoded = json_decode($rawVal, true);
+                    $isJson = (json_last_error() == JSON_ERROR_NONE && (is_array($decoded) || is_object($decoded)));
+
+                    if ($isJson) {
+                        $ids = is_array($decoded) ? $decoded : [$decoded];
+                        foreach ($ids as $id) {
+                            if (!isset($optionCounts[$id])) $optionCounts[$id] = 0;
+                            $optionCounts[$id]++;
+                        }
+                    } else {
+                        if (!isset($optionCounts[$rawVal])) $optionCounts[$rawVal] = 0;
+                        $optionCounts[$rawVal]++;
+                    }
+                } else if (in_array($ans->question->type, ['text', 'number', 'textarea'])) {
+                    if ($normalizedVal === '') continue;
+
+                    $qId = $ans->question_id;
+                    if (!isset($textCounts[$qId])) $textCounts[$qId] = [];
+                    
+                    // Basic normalization: lowercase if English, trim always
+                    $key = mb_strtolower($normalizedVal); 
+                    
+                    if (!isset($textCounts[$qId][$key])) {
+                        $textCounts[$qId][$key] = [
+                            'display' => $normalizedVal, // Keep original casing for first encounter
+                            'count' => 0
+                        ];
+                    }
+                    $textCounts[$qId][$key]['count']++;
+                }
+            }
+        }
+
+        return view('admin.report', compact('sections', 'responses', 'totalResponses', 'optionCounts', 'textCounts'));
+    }
+
     public function responses()
     {
         $responses = Response::withCount('answers')
