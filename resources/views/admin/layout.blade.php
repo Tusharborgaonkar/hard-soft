@@ -144,7 +144,8 @@
             <a href="{{ route('admin.sections.index') }}" class="nav-item {{ request()->is('admin/sections*') ? 'active' : '' }}">Manage Sections</a>
             <a href="{{ route('admin.questions') }}" class="nav-item {{ request()->is('admin/questions*') ? 'active' : '' }}">Manage Questions</a>
             <a href="{{ route('admin.responses') }}" class="nav-item {{ request()->is('admin/responses*') ? 'active' : '' }}">View Responses</a>
-            <a href="{{ route('admin.report') }}" class="nav-item {{ request()->is('admin/report') ? 'active' : '' }}">Print Report</a>
+            <a href="{{ route('admin.result-report') }}" class="nav-item {{ request()->is('admin/result-report') ? 'active' : '' }}">Result Report</a>
+            <a href="{{ route('admin.report') }}" class="nav-item {{ request()->is('admin/report') ? 'active' : '' }}">Detailed Print</a>
             <div style="margin-top: auto; padding: 1rem 0;">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf

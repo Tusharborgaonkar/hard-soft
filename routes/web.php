@@ -41,6 +41,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/questions/{id}/toggle', [\App\Http\Controllers\AdminController::class , 'toggleQuestion'])->name('admin.questions.toggle');
 
         Route::get('/report', [\App\Http\Controllers\AdminController::class , 'report'])->name('admin.report');
+        Route::get('/result-report', [\App\Http\Controllers\ResultReportController::class , 'index'])->name('admin.result-report');
         Route::get('/responses', [\App\Http\Controllers\AdminController::class , 'responses'])->name('admin.responses');
         Route::get('/responses/{id}', [\App\Http\Controllers\AdminController::class , 'showResponse'])->name('admin.responses.show');
         Route::get('/responses/{id}/edit', [\App\Http\Controllers\AdminController::class , 'editResponse'])->name('admin.responses.edit');
